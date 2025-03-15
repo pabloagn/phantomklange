@@ -1,0 +1,15 @@
+baseURL = "https://phantomklange.com/"
+languageCode = "en-us"
+title = "Phantomklänge"
+theme = "hugo-brewm"  # Match your theme's folder name
+
+# Taxonomy settings
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  author = "authors" # Writers, Directors
+  period = "periods"  # For historical periods (fin de siècle, etc.)
+  
+[params]
+  description = "Explorations in literature, film, and philosophy"
+  # Add any theme-specific parameters as needed
