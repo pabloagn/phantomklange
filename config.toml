@@ -13,3 +13,10 @@ theme = "hugo-brewm"  # Match your theme's folder name
 [params]
   description = "Explorations in literature, film, and philosophy"
   # Add any theme-specific parameters as needed
+
+[menu]
+  [[menu.main]]
+    identifier = "categories"
+    name = "Categories"
+    url = "/categories/"
+    weight = 30
