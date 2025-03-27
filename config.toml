@@ -12,7 +12,7 @@ theme = "hugo-brewm"  # Match your theme's folder name
   
 [params]
   description = "Explorations in literature, film, and philosophy"
-  # Add any theme-specific parameters as needed
+  math = true  # Enable math rendering globally
 
 [menu]
   [[menu.main]]
