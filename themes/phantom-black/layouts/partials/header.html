@@ -1,0 +1,24 @@
+<!-- layouts/partials/header.html -->
+
+<header class="site-header">
+    <div class="container">
+        <div class="site-header-inner">
+            <div class="site-logo">
+                <a href="{{ .Site.Home.RelPermalink }}">
+                    <img src="/images/logo/logo_white_letters.png" alt="{{ .Site.Title }}" class="header-logo">
+                </a>
+            </div>
+           
+            <nav class="main-nav">
+                <ul>
+                    {{ $currentPage := . }}
+                    {{ range .Site.Menus.main }}
+                    <li class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
+                        <a href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+                    </li>
+                    {{ end }}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>

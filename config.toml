@@ -1,22 +1,58 @@
 baseURL = "https://phantomklange.com/"
 languageCode = "en-us"
 title = "Phantomklänge"
-theme = "hugo-brewm"  # Match your theme's folder name
+theme = "phantom-black"
 
 # Taxonomy settings
 [taxonomies]
   category = "categories"
   tag = "tags"
-  author = "authors" # Writers, Directors
-  period = "periods"  # For historical periods (fin de siècle, etc.)
-  
+  author = "authors"
+  period = "periods"
+  genre = "genres"
+  publisher = "publishers"
+  director = "directors"
+  artist = "artists"
+  type = "types"
+
 [params]
   description = "Explorations in literature, film, and philosophy"
-  math = true  # Enable math rendering globally
+  math = true
 
+# Menu structure
 [menu]
   [[menu.main]]
-    identifier = "categories"
-    name = "Categories"
-    url = "/categories/"
+    identifier = "books"
+    name = "Books"
+    url = "/books/"
+    weight = 10
+    
+  [[menu.main]]
+    identifier = "films"
+    name = "Films"
+    url = "/films/"
+    weight = 20
+
+  [[menu.main]]
+    identifier = "films"
+    name = "Films"
+    url = "/films/"
     weight = 30
+
+  [[menu.main]]
+    identifier = "people"
+    name = "People"
+    url = "/people/"
+    weight = 40
+
+  [[menu.main]]
+    identifier = "essays"
+    name = "Essays"
+    url = "/essays/"
+    weight = 50
+    
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 60

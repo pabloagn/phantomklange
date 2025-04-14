@@ -1,0 +1,36 @@
+{{ define "main" }}
+<div class="container">
+    <div class="home-intro">
+        <h1>{{ .Site.Title }}</h1>
+        {{ with .Site.Params.description }}
+        <p class="site-description">{{ . }}</p>
+        {{ end }}
+    </div>
+    
+    {{ with .Content }}
+    <div class="home-content">
+        {{ . }}
+    </div>
+    {{ end }}
+    
+    <!-- Only show this section if books exist -->
+    {{ $books := where .Site.RegularPages "Section" "books" }}
+    {{ if gt (len $books) 0 }}
+    <section class="home-section">
+        <h2>Recent Books</h2>
+        <div class="preview-grid">
+            {{ range first 3 $books }}
+            <article class="preview-card">
+                <h3>
+                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                </h3>
+                {{ with .Params.author }}
+                <p class="item-author">{{ . }}</p>
+                {{ end }}
+            </article>
+            {{ end }}
+        </div>
+    </section>
+    {{ end }}
+</div>
+{{ end }}

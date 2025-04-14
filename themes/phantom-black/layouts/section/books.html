@@ -1,0 +1,294 @@
+{{ define "main" }}
+<div class="books-archive">
+    <!-- Hero section -->
+    <div class="archive-hero">
+        <div class="container">
+            <h1 class="archive-title">{{ .Title }}</h1>
+            {{ with .Description }}
+                <p class="archive-description">{{ . }}</p>
+            {{ end }}
+        </div>
+    </div>
+
+    <!-- Filtering and search section -->
+    <div class="archive-controls">
+        <div class="container">
+            <div class="search-filter-container">
+                <div class="archive-search">
+                    <input type="text" id="book-search" placeholder="Search by title or author..." aria-label="Search books">
+                    <button id="search-button" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="archive-filters">
+                    <div class="filter-group">
+                        <label for="period-filter">Period</label>
+                        <select id="period-filter" aria-label="Filter by period">
+                            <option value="">All Periods</option>
+                            {{ range $name, $taxonomy := .Site.Taxonomies.periods }}
+                                <option value="{{ $name | urlize }}">{{ $name }} ({{ $taxonomy.Count }})</option>
+                            {{ end }}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="genre-filter">Genre</label>
+                        <select id="genre-filter" aria-label="Filter by genre">
+                            <option value="">All Genres</option>
+                            {{ range $name, $taxonomy := .Site.Taxonomies.genres }}
+                                <option value="{{ $name | urlize }}">{{ $name }} ({{ $taxonomy.Count }})</option>
+                            {{ end }}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="sort-by">Sort By</label>
+                        <select id="sort-by" aria-label="Sort results">
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
+                            <option value="author-asc">Author (A-Z)</option>
+                            <option value="author-desc">Author (Z-A)</option>
+                            <option value="date-desc">Newest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="rating-desc">Rating (High to Low)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results count and active filters display -->
+    <div class="archive-results-info">
+        <div class="container">
+            <p id="results-count"><span id="count">{{ len .Pages }}</span> works found</p>
+            <div id="active-filters" class="active-filters"></div>
+        </div>
+    </div>
+
+    <!-- Books grid -->
+    <div class="container">
+        <div class="books-grid" id="books-container">
+            {{ range .Pages }}
+            <article class="book-card" 
+                     data-title="{{ .Title }}" 
+                     data-author="{{ .Params.author }}" 
+                     data-period="{{ .Params.period }}"
+                     data-genre="{{ .Params.genre }}"
+                     data-rating="{{ .Params.rating }}"
+                     data-date="{{ .Date.Format "2006-01-02" }}">
+                <div class="book-card-inner">
+                    <a href="{{ .RelPermalink }}" class="book-link">
+                        <div class="book-cover">
+                            {{/* Properly handle image paths based on your structure */}}
+                            {{ $folderName := "" }}
+                            {{ with .Params.book_id }}
+                                {{ $folderName = printf "%s-%s" . ($.Title | urlize) }}
+                            {{ else }}
+                                {{ $folderName = $.Title | urlize }}
+                            {{ end }}
+                            
+                            {{ $posterPath := printf "/images/books/%s/poster.jpg" $folderName }}
+                            
+                            <div style="display:none;" class="debug-info">
+                                {{ $posterPath }}
+                            </div>
+
+                            {{ if .Params.featured_image }}
+                                <img src="{{ .Params.featured_image }}" alt="Cover of {{ .Title }}" loading="lazy">
+                            {{ else }}
+                            <img src="{{ $posterPath }}" alt="Cover of {{ .Title }}" loading="lazy" 
+                            onerror="this.style.display='none';this.parentElement.classList.add('book-cover-placeholder');">
+                            {{ end }}
+                        </div>
+                    </a>
+                    
+                    <div class="book-info">
+                        <h2 class="book-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+                        {{ with .Params.author }}
+                            <p class="book-author">by {{ . }}</p>
+                        {{ end }}
+                        
+                        <div class="book-meta">
+                            {{ with .Params.period }}
+                                <span class="book-period">{{ . }}</span>
+                            {{ end }}
+                            
+                            {{ with .Params.published_date }}
+                                <span class="book-year">{{ . }}</span>
+                            {{ end }}
+                            
+                            {{ if .Params.rating }}
+                                <div class="book-rating" aria-label="Rating: {{ .Params.rating }} out of 5">
+                                    {{ $rating := .Params.rating }}
+                                    {{ range seq 5 }}
+                                        {{ if le . $rating }}
+                                            <span class="star filled">★</span>
+                                        {{ else }}
+                                            <span class="star">☆</span>
+                                        {{ end }}
+                                    {{ end }}
+                                </div>
+                            {{ end }}
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {{ end }}
+        </div>
+        
+        <!-- Empty state for no results -->
+        <div id="no-results" class="no-results" style="display: none;">
+            <p>No books match your search criteria.</p>
+            <button id="reset-filters" class="reset-button">Reset Filters</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const booksContainer = document.getElementById('books-container');
+    const bookCards = Array.from(booksContainer.querySelectorAll('.book-card'));
+    const searchInput = document.getElementById('book-search');
+    const periodFilter = document.getElementById('period-filter');
+    const genreFilter = document.getElementById('genre-filter');
+    const sortBySelect = document.getElementById('sort-by');
+    const resultsCount = document.getElementById('count');
+    const noResults = document.getElementById('no-results');
+    const resetFiltersBtn = document.getElementById('reset-filters');
+    const activeFiltersContainer = document.getElementById('active-filters');
+    
+    // Initial count
+    resultsCount.textContent = bookCards.length;
+    
+    // Filter books based on current criteria
+    function filterBooks() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedPeriod = periodFilter.value.toLowerCase();
+        const selectedGenre = genreFilter.value.toLowerCase();
+        
+        let visibleCount = 0;
+        
+        bookCards.forEach(card => {
+            const title = card.getAttribute('data-title').toLowerCase();
+            const author = card.getAttribute('data-author').toLowerCase();
+            const period = card.getAttribute('data-period').toLowerCase();
+            const genre = card.getAttribute('data-genre').toLowerCase();
+            
+            const matchesSearch = title.includes(searchTerm) || author.includes(searchTerm);
+            const matchesPeriod = !selectedPeriod || period.includes(selectedPeriod);
+            const matchesGenre = !selectedGenre || genre.includes(selectedGenre);
+            
+            const isVisible = matchesSearch && matchesPeriod && matchesGenre;
+            
+            card.style.display = isVisible ? '' : 'none';
+            
+            if (isVisible) {
+                visibleCount++;
+            }
+        });
+        
+        // Update count and toggle empty state
+        resultsCount.textContent = visibleCount;
+        noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        
+        // Update active filters display
+        updateActiveFilters();
+    }
+    
+    // Sort books
+    function sortBooks() {
+        const sortValue = sortBySelect.value;
+        
+        const sortedCards = bookCards.slice().sort((a, b) => {
+            switch(sortValue) {
+                case 'title-asc':
+                    return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+                case 'title-desc':
+                    return b.getAttribute('data-title').localeCompare(a.getAttribute('data-title'));
+                case 'author-asc':
+                    return a.getAttribute('data-author').localeCompare(b.getAttribute('data-author'));
+                case 'author-desc':
+                    return b.getAttribute('data-author').localeCompare(a.getAttribute('data-author'));
+                case 'date-desc':
+                    return b.getAttribute('data-date').localeCompare(a.getAttribute('data-date'));
+                case 'date-asc':
+                    return a.getAttribute('data-date').localeCompare(b.getAttribute('data-date'));
+                case 'rating-desc':
+                    return parseFloat(b.getAttribute('data-rating') || 0) - parseFloat(a.getAttribute('data-rating') || 0);
+                default:
+                    return 0;
+            }
+        });
+        
+        // Reorder DOM elements
+        sortedCards.forEach(card => {
+            booksContainer.appendChild(card);
+        });
+    }
+    
+    // Update active filters UI
+    function updateActiveFilters() {
+        activeFiltersContainer.innerHTML = '';
+        
+        // Search term
+        if (searchInput.value) {
+            addActiveFilter(`Search: ${searchInput.value}`, () => {
+                searchInput.value = '';
+                filterBooks();
+            });
+        }
+        
+        // Period filter
+        if (periodFilter.value) {
+            const periodText = periodFilter.options[periodFilter.selectedIndex].text;
+            addActiveFilter(`Period: ${periodText.split(' ')[0]}`, () => {
+                periodFilter.value = '';
+                filterBooks();
+            });
+        }
+        
+        // Genre filter
+        if (genreFilter.value) {
+            const genreText = genreFilter.options[genreFilter.selectedIndex].text;
+            addActiveFilter(`Genre: ${genreText}`, () => {
+                genreFilter.value = '';
+                filterBooks();
+            });
+        }
+    }
+    
+    // Add active filter tag
+    function addActiveFilter(text, clearFn) {
+        const filterTag = document.createElement('span');
+        filterTag.className = 'active-filter';
+        filterTag.innerHTML = `${text} <button aria-label="Remove filter">×</button>`;
+        
+        filterTag.querySelector('button').addEventListener('click', clearFn);
+        activeFiltersContainer.appendChild(filterTag);
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', filterBooks);
+    periodFilter.addEventListener('change', filterBooks);
+    genreFilter.addEventListener('change', filterBooks);
+    sortBySelect.addEventListener('change', sortBooks);
+    
+    resetFiltersBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        periodFilter.value = '';
+        genreFilter.value = '';
+        sortBySelect.value = 'title-asc';
+        filterBooks();
+        sortBooks();
+    });
+    
+    // Initialize with default sort
+    sortBooks();
+});
+</script>
+{{ end }}

@@ -1,0 +1,21 @@
+<!-- layouts/partials/footer.html -->
+
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-logo">
+            <img src="/images/logo/logo_white_full.png" alt="{{ .Site.Title }}" class="footer-logo-img">
+        </div>
+        <div class="footer-content">
+            <nav class="footer-nav">
+                <ul>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ now.Format "2006" }} {{ .Site.Title }}. All rights reserved.</p>
+        </div>
+    </div>
+</footer>

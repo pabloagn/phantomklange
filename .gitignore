@@ -1,3 +1,6 @@
+# .gitignore file for Phantom Project
+# /phantomklange website
+
 # Hugo default output directory
 /public/
 /resources/_gen/

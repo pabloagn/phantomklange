@@ -1,0 +1,11 @@
+<!-- layouts/404.html -->
+{{ define "main" }}
+<div class="container">
+    <div class="error-page">
+        <h1>404</h1>
+        <h2>Page Not Found</h2>
+        <p>The page you were looking for doesn't exist or has been moved.</p>
+        <a href="{{ .Site.Home.RelPermalink }}" class="btn">Return Home</a>
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,13 @@
+# themes/phantom-black/theme.toml
+name = "Phantom Black"
+license = "MIT"
+licenselink = "https://github.com/yourusername/phantom-black/blob/master/LICENSE"
+description = "A gothic minimalist theme for literary and philosophical content"
+homepage = "https://phantomklange.com/"
+tags = ["dark", "minimal", "gothic", "blog", "responsive"]
+features = ["responsive", "custom post types", "dark mode"]
+min_version = "0.80.0"
+
+[author]
+  name = "Phantom Klänge"
+  homepage = "https://phantomklange.com/"
