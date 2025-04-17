@@ -1,11 +1,20 @@
 {{/* ============================================================ */}}
 {{/* layouts/partials/is-primary-role.html                      */}}
-{{/*                                                            */}}
 {{/* Checks if a role key is marked as primary.                 */}}
 {{/* Input (.): Role key (string, e.g., "author")               */}}
 {{/* Output: Boolean (true/false)                               */}}
 {{/* ============================================================ */}}
 {{ $roleKey := . }}
-{{ $roleData := index site.Data.contribution_roles $roleKey }}
-{{/* Default to false if role key or flag is missing */}}
-{{ return $roleData.primary_work_role | default false }}
+{{ $isPrimary := false }} {{/* Default to false */}}
+
+{{/* Check if the role key exists in the data */}}
+{{ with index site.Data.contribution_roles $roleKey }}
+    {{/* If the key exists, check the primary_work_role field */}}
+    {{/* Use 'isset' for safety, though '.primary_work_role | default false' also works here */}}
+    {{ if isset . "primary_work_role" }}
+         {{ $isPrimary = .primary_work_role }}
+    {{ end }}
+    {{/* Alternatively, simpler: $isPrimary = .primary_work_role | default false */}}
+{{ end }}
+
+{{ return $isPrimary }}

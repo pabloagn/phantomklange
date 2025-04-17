@@ -10,63 +10,81 @@
 {{ $page := .page }}
 {{ $ := .context }}
 {{ $contributors := .contributors }}
-{{ $workType := $page.Type }}
+{{ $workType := "" }} {{/* Initialize */}}
+{{ $pageParams := dict }} {{/* Initialize */}}
 
-<div class="metadata-grid">
-    <div class="metadata-column">
-        {{/* --- Display Non-Primary Contributors --- */}}
-        {{ range $contributors }}
-            {{ $roleKey := .role }}
-            {{ $isPrimary := partial "is-primary-role.html" $roleKey }}
-            {{ if not $isPrimary }}
-                {{ $roleDisplay := partial "get-role-display.html" $roleKey }}
-                {{ $personName := .person }}
-                {{ partial "metadata-item.html" (dict "label" $roleDisplay "value" $personName "link" (printf "/people/%s/" ($personName | urlize)) "context" $) }}
+{{/* --- GUARD: Ensure page and context are valid --- */}}
+{{ if and $page $ }}
+    {{ $workType = $page.Type }}
+    {{ with $page.Params }}{{ $pageParams = . }}{{ end }} {{/* Safely get Params */}}
+
+    <div class="metadata-grid">
+        <div class="metadata-column">
+            {{/* --- Display Non-Primary Contributors --- */}}
+            {{ with $contributors }}
+                {{ range . }}
+                    {{ $roleKey := .role }}
+                    {{ $personName := .person }}
+                    {{/* --- DEBUG --- */}}
+                    {{/* {{ warnf "DEBUG metadata-display: Person: %s, Role: %s, isPrimary? %t" $personName $roleKey (partial "is-primary-role.html" $roleKey) }} */}}
+                    {{/* --- END DEBUG --- */}}
+                    {{ $isPrimary := partial "is-primary-role.html" $roleKey }}
+                    {{ if not $isPrimary }}
+                        {{ $roleDisplay := partial "get-role-display.html" $roleKey }}
+                        {{ partial "metadata-item.html" (dict "label" $roleDisplay "value" $personName "link" (printf "/people/%s/" ($personName | urlize)) "context" $) }}
+                    {{ end }}
+                {{ end }}
             {{ end }}
-        {{ end }}
-        {{/* --- End Non-Primary Contributors --- */}}
+            {{/* --- End Non-Primary Contributors --- */}}
 
-        {{/* --- Common fields first column - Adjusted logic --- */}}
-        {{ if eq $workType "book" }}
-             {{ with $page.Params.published_date }}{{ partial "metadata-item.html" (dict "label" "Published" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.publisher }}{{ partial "metadata-item.html" (dict "label" "Publisher" "value" . "link" (printf "/publishers/%s/" (. | urlize)) "context" $) }}{{ end }}
-             {{ with $page.Params.page_count }}{{ partial "metadata-item.html" (dict "label" "Pages" "value" . "context" $) }}{{ end }}
-        {{ else if eq $workType "painting" }}
-             {{ with $page.Params.creation_date }}{{ partial "metadata-item.html" (dict "label" "Created" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.medium }}{{ partial "metadata-item.html" (dict "label" "Medium" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.dimensions }}{{ partial "metadata-item.html" (dict "label" "Dimensions" "value" . "context" $) }}{{ end }}
-        {{ else if eq $workType "scent" }}
-             {{ with $page.Params.launch_date }}{{ partial "metadata-item.html" (dict "label" "Launched" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.concentration }}{{ partial "metadata-item.html" (dict "label" "Concentration" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.notes_top }}{{ partial "metadata-item.html" (dict "label" "Top Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
-        {{ else if eq $workType "film" }}
-             {{ with $page.Params.release_date }}{{ partial "metadata-item.html" (dict "label" "Released" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.runtime }}{{ partial "metadata-item.html" (dict "label" "Runtime" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.country }}{{ partial "metadata-item.html" (dict "label" "Country" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.language }}{{ partial "metadata-item.html" (dict "label" "Language" "value" . "context" $) }}{{ end }}
-         {{/* Add conditions for other work types (architecture, etc.) as needed */}}
-        {{ end }}
+            {{/* --- Common fields first column - Adjusted logic --- */}}
+            {{ if eq $workType "book" }}
+                 {{ with $pageParams.published_date }}{{ partial "metadata-item.html" (dict "label" "Published" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.publisher }}{{ partial "metadata-item.html" (dict "label" "Publisher" "value" . "link" (printf "/publishers/%s/" (. | urlize)) "context" $) }}{{ end }}
+                 {{ with $pageParams.page_count }}{{ partial "metadata-item.html" (dict "label" "Pages" "value" . "context" $) }}{{ end }}
+            {{ else if eq $workType "painting" }}
+                 {{ with $pageParams.creation_date }}{{ partial "metadata-item.html" (dict "label" "Created" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.medium }}{{ partial "metadata-item.html" (dict "label" "Medium" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.dimensions }}{{ partial "metadata-item.html" (dict "label" "Dimensions" "value" . "context" $) }}{{ end }}
+            {{ else if eq $workType "scent" }}
+                 {{ with $pageParams.launch_date }}{{ partial "metadata-item.html" (dict "label" "Launched" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.concentration }}{{ partial "metadata-item.html" (dict "label" "Concentration" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.notes_top }}{{ partial "metadata-item.html" (dict "label" "Top Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
+            {{ else if eq $workType "film" }}
+                 {{ with $pageParams.release_date }}{{ partial "metadata-item.html" (dict "label" "Released" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.runtime }}{{ partial "metadata-item.html" (dict "label" "Runtime" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.country }}{{ partial "metadata-item.html" (dict "label" "Country" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.language }}{{ partial "metadata-item.html" (dict "label" "Language" "value" . "context" $) }}{{ end }}
+             {{/* Add conditions for other work types (architecture, etc.) as needed */}}
+            {{ end }}
+        </div>
+        <div class="metadata-column">
+             {{/* --- Common fields second column - Adjusted logic --- */}}
+             {{ if eq $workType "book" }}
+                {{ with $pageParams.isbn10 }}{{ partial "metadata-item.html" (dict "label" "ISBN-10" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true "context" $) }}{{ end }}
+                {{ with $pageParams.isbn13 }}{{ partial "metadata-item.html" (dict "label" "ISBN-13" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true "context" $) }}{{ end }}
+                 {{ with $pageParams.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+                 {{ with $pageParams.period }}{{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}{{ end }}
+            {{ else if eq $workType "painting" }}
+                {{ with $pageParams.location }}{{ partial "metadata-item.html" (dict "label" "Location" "value" . "context" $) }}{{ end }}
+                 {{ with $pageParams.period }}{{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}{{ end }}
+                 {{ with $pageParams.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+            {{ else if eq $workType "scent" }}
+                 {{ with $pageParams.notes_middle }}{{ partial "metadata-item.html" (dict "label" "Middle Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
+                 {{ with $pageParams.notes_base }}{{ partial "metadata-item.html" (dict "label" "Base Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
+                 {{ with $pageParams.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+             {{ else if eq $workType "film" }}
+                 {{ with $pageParams.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+                 {{ with $pageParams.studio }}{{ partial "metadata-item.html" (dict "label" "Studio" "value" . "context" $) }}{{ end }}
+                 {{/* Add other film metadata if needed */}}
+             {{/* Add conditions for other work types */}}
+            {{ end }}
+        </div>
     </div>
-    <div class="metadata-column">
-         {{/* --- Common fields second column - Adjusted logic --- */}}
-         {{ if eq $workType "book" }}
-            {{ with $page.Params.isbn10 }}{{ partial "metadata-item.html" (dict "label" "ISBN-10" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true "context" $) }}{{ end }}
-            {{ with $page.Params.isbn13 }}{{ partial "metadata-item.html" (dict "label" "ISBN-13" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true "context" $) }}{{ end }}
-             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
-             {{ with $page.Params.period }}{{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}{{ end }}
-        {{ else if eq $workType "painting" }}
-            {{ with $page.Params.location }}{{ partial "metadata-item.html" (dict "label" "Location" "value" . "context" $) }}{{ end }}
-             {{ with $page.Params.period }}{{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}{{ end }}
-             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
-        {{ else if eq $workType "scent" }}
-             {{ with $page.Params.notes_middle }}{{ partial "metadata-item.html" (dict "label" "Middle Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
-             {{ with $page.Params.notes_base }}{{ partial "metadata-item.html" (dict "label" "Base Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
-             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
-         {{ else if eq $workType "film" }}
-             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
-             {{ with $page.Params.studio }}{{ partial "metadata-item.html" (dict "label" "Studio" "value" . "context" $) }}{{ end }}
-             {{/* Add other film metadata if needed */}}
-         {{/* Add conditions for other work types */}}
-        {{ end }}
+
+{{ else }}
+    {{/* --- OUTPUT WARNING IF PARTIAL CALLED WITHOUT PAGE/CONTEXT --- */}}
+    <div style="border: 1px dashed orange; padding: 5px; margin: 5px; background-color: #330; color: white; font-size: 0.8em;">
+        Warning: metadata-display.html called without valid page or context.
     </div>
-</div>
+{{ end }} {{/* End the top-level 'if and $page $' guard */}}

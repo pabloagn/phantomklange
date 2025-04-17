@@ -8,109 +8,142 @@
 {{/*   - site (object): The global $.Site object                */}}
 {{/* ============================================================ */}}
 {{ $page := .page }}
-{{ $sectionType := .sectionType }} {{/* This is the key, e.g., "book", "film" */}}
+{{ $sectionType := .sectionType | default "unknown" }}
 {{ $site := .site }}
 
+{{/* --- Initialize variables --- */}}
 {{ $idParam := "" }}
 {{ $imageDir := "" }}
-{{/* Derive from type, maybe map lookup is better long term */}}
-{{ if eq $sectionType "book" }}{{ $idParam = "book_id" }}{{ $imageDir = "books" }}{{ end }}
-{{ if eq $sectionType "film" }}{{ $idParam = "film_id" }}{{ $imageDir = "films" }}{{ end }}
-{{ if eq $sectionType "painting" }}{{ $idParam = "painting_id" }}{{ $imageDir = "paintings" }}{{ end }}
-{{ if eq $sectionType "scent" }}{{ $idParam = "scent_id" }}{{ $imageDir = "scents" }}{{ end }}
-{{ if eq $sectionType "photograph" }}{{ $idParam = "photograph_id" }}{{ $imageDir = "photographs" }}{{ end }}
-{{ if eq $sectionType "musical_composition" }}{{ $idParam = "composition_id" }}{{ $imageDir = "compositions" }}{{ end }}
-{{ if eq $sectionType "play" }}{{ $idParam = "play_id" }}{{ $imageDir = "plays" }}{{ end }}
-{{ if eq $sectionType "sculpture" }}{{ $idParam = "sculpture_id" }}{{ $imageDir = "sculptures" }}{{ end }}
-{{ if eq $sectionType "print" }}{{ $idParam = "print_id" }}{{ $imageDir = "prints" }}{{ end }}
-{{ if eq $sectionType "graphic_novel" }}{{ $idParam = "graphic_novel_id" }}{{ $imageDir = "graphic_novels" }}{{ end }}
-{{ if eq $sectionType "digital_art" }}{{ $idParam = "digital_art_id" }}{{ $imageDir = "digital_art" }}{{ end }}
-{{ if eq $sectionType "architecture" }}{{ $idParam = "architecture_id" }}{{ $imageDir = "architecture" }}{{ end }}
-{{ if eq $sectionType "installation" }}{{ $idParam = "installation_id" }}{{ $imageDir = "installations" }}{{ end }}
-{{ if eq $sectionType "sound_art" }}{{ $idParam = "sound_art_id" }}{{ $imageDir = "sound_art" }}{{ end }}
-{{ if eq $sectionType "ceramics" }}{{ $idParam = "ceramics_id" }}{{ $imageDir = "ceramics" }}{{ end }}
-{{ if eq $sectionType "fashion_collection" }}{{ $idParam = "collection_id" }}{{ $imageDir = "fashion_collections" }}{{ end }}
-{{ if eq $sectionType "exhibition" }}{{ $idParam = "exhibition_id" }}{{ $imageDir = "exhibitions" }}{{ end }}
-{{ if eq $sectionType "person" }}{{ $idParam = "person_id" }}{{ $imageDir = "people" }}{{ end }}
-{{ if eq $sectionType "essay" }}{{ $imageDir = "essays" }}{{ end }} {{/* Essays might have featured image, but no standard ID/poster */}}
-
-
 {{ $itemId := "" }}
-{{ if and ($idParam) ($page.Params | isset $idParam) }}
-    {{ $itemId = index $page.Params $idParam }}
-{{ end }}
-{{ $fallbackTitleSlug := $page.Title | urlize }}
-{{ $folderName := "" }}
- {{ if ne $itemId "" }}
-    {{ $folderName = printf "%s-%s" $itemId $fallbackTitleSlug }}
-{{ else if ne $imageDir "" }}
-     {{ $folderName = $fallbackTitleSlug }}
-{{ end }}
-
-{{ $posterPath := "" }}
-{{ $hasPoster := false }}
- {{ if and (ne $imageDir "") (ne $folderName "") }}
-    {{ $posterPath = printf "/images/%s/%s/poster.jpg" $imageDir $folderName }}
-    {{ $hasPoster = true }} {{/* Assume poster might exist */}}
-{{ end }}
-
-
-{{/* --- Logic for display subtitle --- */}}
+{{ $pageParams := dict }}
+{{ $primaryContributors := slice }}
 {{ $displaySubtitle := "" }}
-{{ if eq $sectionType "person" }}
-    {{ $displaySubtitle = $page.Params.description | truncate 70 }}
-{{ else if eq $sectionType "essay" }}
-    {{ $displaySubtitle = $page.Date.Format ($site.Params.dateFormat | default "Jan 2, 2006") }}
-{{ else if $page.Params.contributors }} {{/* Handle works with contributors */}}
-    {{ $primaryContributors := slice }}
-    {{ range $page.Params.contributors }}
-        {{ if partial "is-primary-role.html" .role }}
-            {{ $primaryContributors = $primaryContributors | append .person }}
+{{ $title := "[Untitled]" }} {{/* Default */}}
+
+{{/* --- GUARD: Only proceed if we have a valid page object --- */}}
+{{ if $page }}
+    {{ $title = $page.Title | default "[Untitled]" }}
+
+    {{/* Determine ID param and image directory based on type */}}
+    {{ if eq $sectionType "book" }}{{ $idParam = "book_id" }}{{ $imageDir = "books" }}{{ end }}
+    {{ if eq $sectionType "film" }}{{ $idParam = "film_id" }}{{ $imageDir = "films" }}{{ end }}
+    {{ if eq $sectionType "painting" }}{{ $idParam = "painting_id" }}{{ $imageDir = "paintings" }}{{ end }}
+    {{ if eq $sectionType "scent" }}{{ $idParam = "scent_id" }}{{ $imageDir = "scents" }}{{ end }}
+    {{ if eq $sectionType "photograph" }}{{ $idParam = "photograph_id" }}{{ $imageDir = "photographs" }}{{ end }}
+    {{ if eq $sectionType "musical_composition" }}{{ $idParam = "composition_id" }}{{ $imageDir = "compositions" }}{{ end }}
+    {{ if eq $sectionType "play" }}{{ $idParam = "play_id" }}{{ $imageDir = "plays" }}{{ end }}
+    {{ if eq $sectionType "sculpture" }}{{ $idParam = "sculpture_id" }}{{ $imageDir = "sculptures" }}{{ end }}
+    {{ if eq $sectionType "print" }}{{ $idParam = "print_id" }}{{ $imageDir = "prints" }}{{ end }}
+    {{ if eq $sectionType "graphic_novel" }}{{ $idParam = "graphic_novel_id" }}{{ $imageDir = "graphic_novels" }}{{ end }}
+    {{ if eq $sectionType "digital_art" }}{{ $idParam = "digital_art_id" }}{{ $imageDir = "digital_art" }}{{ end }}
+    {{ if eq $sectionType "architecture" }}{{ $idParam = "architecture_id" }}{{ $imageDir = "architecture" }}{{ end }}
+    {{ if eq $sectionType "installation" }}{{ $idParam = "installation_id" }}{{ $imageDir = "installations" }}{{ end }}
+    {{ if eq $sectionType "sound_art" }}{{ $idParam = "sound_art_id" }}{{ $imageDir = "sound_art" }}{{ end }}
+    {{ if eq $sectionType "ceramics" }}{{ $idParam = "ceramics_id" }}{{ $imageDir = "ceramics" }}{{ end }}
+    {{ if eq $sectionType "fashion_collection" }}{{ $idParam = "collection_id" }}{{ $imageDir = "fashion_collections" }}{{ end }}
+    {{ if eq $sectionType "exhibition" }}{{ $idParam = "exhibition_id" }}{{ $imageDir = "exhibitions" }}{{ end }}
+    {{ if eq $sectionType "person" }}{{ $idParam = "person_id" }}{{ $imageDir = "people" }}{{ end }}
+    {{ if eq $sectionType "essay" }}{{ $imageDir = "essays" }}{{ end }}
+
+
+    {{/* Safely access Params and contributors */}}
+    {{ with $page.Params }}
+        {{ $pageParams = . }}
+        {{ if and $idParam ($pageParams | isset $idParam) }}
+            {{ $itemId = index $pageParams $idParam }}
+        {{ end }}
+
+        {{/* Get Primary Contributors */}}
+        {{ with $pageParams.contributors }}
+            {{ range . }}
+                {{ if partial "is-primary-role.html" .role }}
+                    {{ $primaryContributors = $primaryContributors | append .person }}
+                {{ end }}
+            {{ end }}
         {{ end }}
     {{ end }}
-    {{ $displaySubtitle = delimit ($primaryContributors | uniq) ", " }}
-{{ end }}
-{{/* --- End Subtitle Logic --- */}}
+
+    {{/* --- Logic for display subtitle --- */}}
+    {{ if eq $sectionType "person" }}
+        {{ $displaySubtitle = $pageParams.description | default "" | truncate 70 }}
+    {{ else if eq $sectionType "essay" }}
+        {{ with $page.Date }}{{ $displaySubtitle = .Format ($site.Params.dateFormat | default "Jan 2, 2006") }}{{ end }}
+    {{ else if $primaryContributors }}
+        {{ $displaySubtitle = delimit ($primaryContributors | uniq) ", " }}
+    {{ end }}
+    {{/* --- End Subtitle Logic --- */}}
 
 
-<article class="archive-grid-item {{ $sectionType }}-card"
-         data-title="{{ $page.Title }}"
-         data-date="{{ $page.Date.Format "2006-01-02" }}"
-         {{ with $page.Params.period }}data-period="{{ . | urlize }}"{{ end }} {{/* URLize for filtering */}}
-         {{ with $page.Params.genre }}data-genre="{{ . | urlize }}"{{ end }} {{/* URLize for filtering */}}
-         {{ with $page.Params.rating }}data-rating="{{ . }}"{{ end }}>
-         {{/* Removed contributor-specific data attributes */}}
-    <div class="archive-grid-item-inner">
-        <a href="{{ $page.RelPermalink }}" class="archive-item-link">
-            <div class="archive-item-cover">
-                {{ $featuredImage := $page.Params.featured_image }}
-                {{ if $featuredImage }}
-                    <img src="{{ $featuredImage | relURL }}" alt="Cover of {{ $page.Title }}" loading="lazy" onerror="this.style.display='none'; this.parentElement.classList.add('cover-placeholder');">
-                {{ else if $hasPoster }}
-                    <img src="{{ $posterPath | relURL }}" alt="{{ $page.Title }}" loading="lazy" onerror="this.style.display='none'; this.parentElement.classList.add('cover-placeholder');">
-                {{ else }}
-                    <div class="cover-placeholder"></div> {{/* Default placeholder */}}
+    {{/* --- Image Path Logic --- */}}
+    {{ $fallbackTitleSlug := $title | urlize }}
+    {{ $folderName := "" }}
+     {{ if and $fallbackTitleSlug (ne $fallbackTitleSlug "") }}
+        {{ if and $itemId (ne $itemId "") }}
+            {{ $folderName = printf "%s-%s" $itemId $fallbackTitleSlug }}
+        {{ else if $imageDir }}
+             {{ $folderName = $fallbackTitleSlug }}
+        {{ end }}
+    {{ end }}
+
+    {{ $posterPath := "" }}
+    {{ $hasPoster := false }}
+     {{ if and $imageDir $folderName }}
+        {{ $posterPath = printf "/images/%s/%s/poster.jpg" $imageDir $folderName }}
+        {{ $hasPoster = true }}
+        {{/* --- DEBUG --- */}}
+        {{/* {{ warnf "DEBUG grid-item: Found poster for %s. Path: %s" $title $posterPath }} */}}
+        {{/* --- END DEBUG --- */}}
+    {{ else }}
+        {{/* --- DEBUG --- */}}
+        {{/* {{ warnf "DEBUG grid-item: Could not determine poster path for %s (Type: %s, ID: %s, Slug: %s, Folder: %s)" $title $sectionType $itemId $fallbackTitleSlug $folderName }} */}}
+        {{/* --- END DEBUG --- */}}
+    {{ end }}
+    {{/* --- End Image Path Logic --- */}}
+
+
+    <article class="archive-grid-item {{ $sectionType }}-card"
+             data-title="{{ $title }}"
+             data-date="{{ with $page.Date }}{{ .Format "2006-01-02" }}{{ end }}"
+             {{ with $pageParams.period }}data-period="{{ . | urlize }}"{{ end }}
+             {{ with $pageParams.genre }}data-genre="{{ . | urlize }}"{{ end }}
+             {{ with $pageParams.rating }}data-rating="{{ . }}"{{ end }}>
+        <div class="archive-grid-item-inner">
+            <a href="{{ $page.RelPermalink }}" class="archive-item-link">
+                <div class="archive-item-cover">
+                    {{ $featuredImage := $pageParams.featured_image }}
+                    {{ if $featuredImage }}
+                        <img src="{{ $featuredImage | relURL }}" alt="Cover of {{ $title }}" loading="lazy" onerror="this.style.display='none'; this.parentElement.classList.add('cover-placeholder');">
+                    {{ else if $hasPoster }}
+                        <img src="{{ $posterPath | relURL }}" alt="{{ $title }}" loading="lazy" onerror="this.style.display='none'; this.parentElement.classList.add('cover-placeholder');">
+                    {{ else }}
+                        <div class="cover-placeholder"></div> {{/* Default placeholder */}}
+                    {{ end }}
+                </div>
+            </a>
+            <div class="archive-item-info">
+                <h2 class="archive-item-title"><a href="{{ $page.RelPermalink }}">{{ $title }}</a></h2>
+                {{ with $displaySubtitle }}
+                    <p class="archive-item-subtitle">{{ . }}</p>
+                {{ end }}
+
+                {{/* Display specific meta like rating */}}
+                {{ if eq $sectionType "book" }}
+                <div class="archive-item-meta">
+                     {{ with $pageParams.rating }}
+                         <div class="book-rating" aria-label="Rating: {{ . }} out of 5">
+                             {{ $rating := . }}
+                             {{ range seq 5 }}{{ if le . $rating }}<span class="star filled">★</span>{{ else }}<span class="star">☆</span>{{ end }}{{ end }}
+                         </div>
+                     {{ end }}
+                </div>
                 {{ end }}
             </div>
-        </a>
-        <div class="archive-item-info">
-            <h2 class="archive-item-title"><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h2>
-            {{ with $displaySubtitle }}
-                <p class="archive-item-subtitle">{{ . }}</p>
-            {{ end }}
-
-            {{/* Add back specific meta if needed, like rating for books */}}
-            {{ if eq $sectionType "book" }}
-            <div class="archive-item-meta">
-                 {{ with $page.Params.rating }}
-                     <div class="book-rating" aria-label="Rating: {{ . }} out of 5">
-                         {{ $rating := . }}
-                         {{ range seq 5 }}{{ if le . $rating }}<span class="star filled">★</span>{{ else }}<span class="star">☆</span>{{ end }}{{ end }}
-                     </div>
-                 {{ end }}
-            </div>
-            {{ end }}
-            {{/* Add meta for other types if desired */}}
         </div>
+    </article>
+
+{{ else }}
+    {{/* --- OUTPUT WARNING IF PARTIAL CALLED WITHOUT PAGE CONTEXT --- */}}
+    <div style="border: 1px dashed orange; padding: 5px; margin: 5px; background-color: #330; color: white; font-size: 0.8em;">
+        Warning: archive-grid-item called without valid page. Type: {{ $sectionType }}
     </div>
-</article>
+{{ end }} {{/* End the top-level 'if $page' guard */}}

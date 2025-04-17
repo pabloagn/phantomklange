@@ -1,16 +1,40 @@
 {{/* ============================================================ */}}
 {{/* layouts/partials/get-work-type-display.html                */}}
-{{/*                                                            */}}
 {{/* Gets the display name for a work type key.                 */}}
 {{/* Input (.): Dict with 'key' (string) & 'plural' (bool, opt) */}}
 {{/* ============================================================ */}}
-{{ $key := .key }}
-{{ $plural := .plural | default false }}
-{{ $typeData := index site.Data.work_types $key }}
+{{ $key := "" }}
+{{ $plural := false }}
+{{ $display := "[Invalid Type Key]" }} {{/* Default error display */}}
 
-{{ $display := "" }}
-{{ if $typeData }}
-  {{ $display = cond $plural $typeData.display_plural $typeData.display_singular }}
+{{/* Validate input context (.) */}}
+{{ if and (reflect.IsMap .) (isset . "key") }}
+    {{ $key = .key }}
+    {{ $plural = .plural | default false }}
+
+    {{/* Validate $key */}}
+    {{ if and (ne $key nil) (reflect.IsKind $key "string") (ne $key "") }}
+        {{/* Try to find the type data */}}
+        {{ with index site.Data.work_types $key }}
+            {{ $typeData := . }}
+            {{/* Key found in data file. Determine singular or plural. */}}
+            {{ if $plural }}
+                {{ $display = $typeData.display_plural | default (printf "%ss" ($typeData.display_singular | default (humanize $key))) }}
+            {{ else }}
+                {{ $display = $typeData.display_singular | default (humanize $key) }}
+            {{ end }}
+        {{ else }}
+             {{/* Key NOT found in data file, humanize as fallback */}}
+             {{ $display = humanize $key }}
+             {{ if $plural }}{{ $display = printf "%ss" $display }}{{ end }} {{/* Basic pluralization */}}
+        {{ end }}
+    {{ else }}
+         {{ warnf "Invalid 'key' value '%v' passed to get-work-type-display.html" $key }}
+         {{/* $display remains "[Invalid Type Key]" */}}
+    {{ end }}
+{{ else }}
+     {{ warnf "Invalid input context (expected map with 'key') passed to get-work-type-display.html. Input: %v" . }}
+     {{/* $display remains "[Invalid Type Key]" */}}
 {{ end }}
-{{/* Fallback if key or display names are missing */}}
-{{ return $display | default (humanize $key) }}
+
+{{ return $display }}

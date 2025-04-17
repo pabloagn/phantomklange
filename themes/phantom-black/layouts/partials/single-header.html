@@ -2,130 +2,170 @@
 {{/* layouts/partials/single-header.html                        */}}
 {{/*                                                            */}}
 {{/* Displays the header for single work/person pages.          */}}
-{{/* Input (.): Dict with:                                      */}}
-{{/*   - page (object)                                          */}}
-{{/*   - layoutType (string: "work" or "person")                */}}
-{{/*   - context (object): The '$' context from caller          */}}
+{{/* Includes nil checks, refined image paths, contributor logic */}}
 {{/* ============================================================ */}}
 {{ $page := .page }}
-{{ $layoutType := .layoutType }}
+{{ $layoutType := .layoutType | default "unknown" }}
 {{ $context := .context }} {{/* This is the '$' from the calling template */}}
 
-{{ $idParam := "" }}
-{{ $imageDir := "" }}
-{{ $title := $page.Title }}
-{{ $fallbackTitleSlug := $page.Title | urlize }}
-{{ $workType := $page.Type }}
-
-{{/* Determine ID param and image directory based on type */}}
-{{/* A map lookup might be cleaner if this list grows very large */}}
-{{ if eq $workType "book" }}{{ $idParam = "book_id" }}{{ $imageDir = "books" }}{{ end }}
-{{ if eq $workType "film" }}{{ $idParam = "film_id" }}{{ $imageDir = "films" }}{{ end }}
-{{ if eq $workType "painting" }}{{ $idParam = "painting_id" }}{{ $imageDir = "paintings" }}{{ end }}
-{{ if eq $workType "scent" }}{{ $idParam = "scent_id" }}{{ $imageDir = "scents" }}{{ end }}
-{{ if eq $workType "photograph" }}{{ $idParam = "photograph_id" }}{{ $imageDir = "photographs" }}{{ end }}
-{{ if eq $workType "musical_composition" }}{{ $idParam = "composition_id" }}{{ $imageDir = "compositions" }}{{ end }}
-{{ if eq $workType "play" }}{{ $idParam = "play_id" }}{{ $imageDir = "plays" }}{{ end }}
-{{ if eq $workType "sculpture" }}{{ $idParam = "sculpture_id" }}{{ $imageDir = "sculptures" }}{{ end }}
-{{ if eq $workType "print" }}{{ $idParam = "print_id" }}{{ $imageDir = "prints" }}{{ end }}
-{{ if eq $workType "graphic_novel" }}{{ $idParam = "graphic_novel_id" }}{{ $imageDir = "graphic_novels" }}{{ end }}
-{{ if eq $workType "digital_art" }}{{ $idParam = "digital_art_id" }}{{ $imageDir = "digital_art" }}{{ end }}
-{{ if eq $workType "architecture" }}{{ $idParam = "architecture_id" }}{{ $imageDir = "architecture" }}{{ end }}
-{{ if eq $workType "installation" }}{{ $idParam = "installation_id" }}{{ $imageDir = "installations" }}{{ end }}
-{{ if eq $workType "sound_art" }}{{ $idParam = "sound_art_id" }}{{ $imageDir = "sound_art" }}{{ end }}
-{{ if eq $workType "ceramics" }}{{ $idParam = "ceramics_id" }}{{ $imageDir = "ceramics" }}{{ end }}
-{{ if eq $workType "fashion_collection" }}{{ $idParam = "collection_id" }}{{ $imageDir = "fashion_collections" }}{{ end }}
-{{ if eq $workType "exhibition" }}{{ $idParam = "exhibition_id" }}{{ $imageDir = "exhibitions" }}{{ end }}
-{{/* Special case for person type */}}
-{{ if eq $workType "person" }}{{ $idParam = "person_id" }}{{ $imageDir = "people" }}{{ end }}
-
-
-{{ $itemId := "" }}
-{{/* Check using 'isset' for safety before 'index' */}}
-{{ if and $idParam ($page.Params | isset $idParam) }}
-    {{ $itemId = index $page.Params $idParam }}
+{{/* --- DEBUG: Log entry point --- */}}
+{{ $currentPagePath := "[Page Object Missing]" }}
+{{ $currentPageKind := "[Page Object Missing]" }}
+{{ with .page }}
+    {{ $currentPagePath = .File.Path | default .Path | default .RelPermalink }}
+    {{ $currentPageKind = .Kind }}
 {{ end }}
+{{/* {{ warnf "DEBUG: Processing single-header.html for Page: %s (Kind: %s) | Layout Type: %s | Context ($) valid: %t" $currentPagePath $currentPageKind $layoutType (ne $context nil) }} */}}
+{{/* --- END DEBUG --- */}}
 
-{{ $folderName := "" }}
-{{ if ne $itemId "" }}
-    {{ $folderName = printf "%s-%s" $itemId $fallbackTitleSlug }}
-{{ else if ne $imageDir "" }} {{/* Fallback if ID missing but type known */}}
-     {{ $folderName = $fallbackTitleSlug }}
-{{ end }}
 
-{{ $coverPath := "" }}
-{{ $posterPath := "" }}
-{{ $hasImages := false }}
-{{ if and (ne $imageDir "") (ne $folderName "") }}
-    {{/* Construct paths relative to site root */}}
-    {{ $coverPath = printf "/images/%s/%s/cover.jpg" $imageDir $folderName }}
-    {{ $posterPath = printf "/images/%s/%s/poster.jpg" $imageDir $folderName }}
-    {{/* We assume images might exist; onerror handles missing ones */}}
-    {{ $hasImages = true }} 
-{{ end }}
+{{/* --- GUARD: Only proceed if we have a valid page object --- */}}
+{{ if $page }}
 
-{{/* --- Logic for Subtitle --- */}}
-{{ $subtitle := "" }}
-{{ if eq $layoutType "work" }}
-    {{ $primaryContributors := slice }}
-    {{ range $page.Params.contributors }}
-        {{ if partial "is-primary-role.html" .role }}
-            {{ $primaryContributors = $primaryContributors | append .person }}
+    {{ $idParam := "" }}
+    {{ $imageDir := "" }}
+    {{ $title := $page.Title | default "[Untitled Page]" }} {{/* Provide default title */}}
+    {{ $fallbackTitleSlug := $title | urlize }}
+    {{ $workType := $page.Type | default "unknown" }} {{/* Provide default type */}}
+
+    {{/* Determine ID param and image directory based on type */}}
+    {{ if eq $workType "book" }}{{ $idParam = "book_id" }}{{ $imageDir = "books" }}{{ end }}
+    {{ if eq $workType "film" }}{{ $idParam = "film_id" }}{{ $imageDir = "films" }}{{ end }}
+    {{ if eq $workType "painting" }}{{ $idParam = "painting_id" }}{{ $imageDir = "paintings" }}{{ end }}
+    {{ if eq $workType "scent" }}{{ $idParam = "scent_id" }}{{ $imageDir = "scents" }}{{ end }}
+    {{ if eq $workType "photograph" }}{{ $idParam = "photograph_id" }}{{ $imageDir = "photographs" }}{{ end }}
+    {{ if eq $workType "musical_composition" }}{{ $idParam = "composition_id" }}{{ $imageDir = "compositions" }}{{ end }}
+    {{ if eq $workType "play" }}{{ $idParam = "play_id" }}{{ $imageDir = "plays" }}{{ end }}
+    {{ if eq $workType "sculpture" }}{{ $idParam = "sculpture_id" }}{{ $imageDir = "sculptures" }}{{ end }}
+    {{ if eq $workType "print" }}{{ $idParam = "print_id" }}{{ $imageDir = "prints" }}{{ end }}
+    {{ if eq $workType "graphic_novel" }}{{ $idParam = "graphic_novel_id" }}{{ $imageDir = "graphic_novels" }}{{ end }}
+    {{ if eq $workType "digital_art" }}{{ $idParam = "digital_art_id" }}{{ $imageDir = "digital_art" }}{{ end }}
+    {{ if eq $workType "architecture" }}{{ $idParam = "architecture_id" }}{{ $imageDir = "architecture" }}{{ end }}
+    {{ if eq $workType "installation" }}{{ $idParam = "installation_id" }}{{ $imageDir = "installations" }}{{ end }}
+    {{ if eq $workType "sound_art" }}{{ $idParam = "sound_art_id" }}{{ $imageDir = "sound_art" }}{{ end }}
+    {{ if eq $workType "ceramics" }}{{ $idParam = "ceramics_id" }}{{ $imageDir = "ceramics" }}{{ end }}
+    {{ if eq $workType "fashion_collection" }}{{ $idParam = "collection_id" }}{{ $imageDir = "fashion_collections" }}{{ end }}
+    {{ if eq $workType "exhibition" }}{{ $idParam = "exhibition_id" }}{{ $imageDir = "exhibitions" }}{{ end }}
+    {{ if eq $workType "person" }}{{ $idParam = "person_id" }}{{ $imageDir = "people" }}{{ end }}
+
+
+    {{ $itemId := "" }}
+    {{ $contributors := slice }} {{/* Initialize contributors slice */}}
+    {{ $pageParams := dict }} {{/* Initialize as empty map */}}
+    {{ with $page.Params }} {{/* Check if Params exist */}}
+        {{ $pageParams = . }} {{/* Assign to variable for easier access */}}
+        {{ if and $idParam ($pageParams | isset $idParam) }}
+            {{ $itemId = index $pageParams $idParam }}
+        {{ end }}
+        {{/* Safely get contributors */}}
+        {{ $contributors = $pageParams.contributors | default slice }}
+    {{ end }}
+
+    {{ $folderName := "" }}
+    {{ if and $fallbackTitleSlug (ne $fallbackTitleSlug "") }} {{/* Ensure slug isn't empty */}}
+        {{ if and $itemId (ne $itemId "") }}
+            {{ $folderName = printf "%s-%s" $itemId $fallbackTitleSlug }}
+        {{ else if $imageDir }} {{/* Fallback if ID missing but type known */}}
+             {{ $folderName = $fallbackTitleSlug }}
         {{ end }}
     {{ end }}
-    {{ $subtitle = delimit ($primaryContributors | uniq) ", " }} 
-{{ else if eq $layoutType "person" }}
-  {{ $subtitle = $page.Params.description }} {{/* Person uses description */}}
-{{ end }}
-{{/* --- End Subtitle Logic --- */}}
 
-<div class="header-image" {{ if $hasImages }} style="background-image: url('{{ $coverPath | relURL }}')" {{ else }} style="background-color: var(--bg-secondary); height: 250px;" {{ end }}>
-    {{ if $hasImages }}<div class="header-overlay"></div>{{ end }}
+    {{ $coverPath := "" }}
+    {{ $posterPath := "" }}
+    {{ $hasImages := false }}
+    {{ if and $imageDir $folderName }}
+        {{ $coverPath = printf "/images/%s/%s/cover.jpg" $imageDir $folderName }}
+        {{ $posterPath = printf "/images/%s/%s/poster.jpg" $imageDir $folderName }}
+        {{ $hasImages = true }}
+        {{/* --- DEBUG --- */}}
+        {{/* {{ warnf "DEBUG single-header: Found images for %s. Poster: %s | Cover: %s" $title $posterPath $coverPath }} */}}
+        {{/* --- END DEBUG --- */}}
+     {{ else }}
+         {{/* --- DEBUG --- */}}
+         {{/* {{ warnf "DEBUG single-header: Could not determine image paths for %s (Type: %s, ID: %s, Slug: %s, Folder: %s)" $title $workType $itemId $fallbackTitleSlug $folderName }} */}}
+         {{/* --- END DEBUG --- */}}
+    {{ end }}
 
+    {{/* --- Logic for Subtitle --- */}}
+    {{ $subtitle := "" }}
+    {{ $primaryContributors := slice }}
     {{ if eq $layoutType "work" }}
-        <div class="book-details-container"> {{/* Reusing class name for consistency */}}
-            <div class="book-details-inner">
-                {{ if $hasImages }}
-                <div class="book-poster-container">
-                    <img src="{{ $posterPath | relURL }}" alt="{{ $title }} poster" class="book-poster" onerror="this.style.display='none'; this.parentElement.style.display='none';">
-                </div>
-                {{ end }}
-                <div class="book-metadata">
-                    <h1 class="book-metadata-title">{{ $title }}</h1>
-                    {{ with $subtitle }}
-                        <p class="book-metadata-author"> {{/* This subtitle now contains primary contributor names */}}
-                            {{ range $index, $personName := $primaryContributors }} {{/* Needs $primaryContributors from subtitle logic */}}
-                                {{ $personPage := $context.Site.GetPage (printf "/people/%s" ($personName | urlize)) }}
-                                {{ if $personPage }}<a href="{{ $personPage.RelPermalink }}">{{ $personName }}</a>{{ else }}{{ $personName }}{{ end }}
-                                {{ if lt $index (sub (len $primaryContributors) 1) }}, {{ end }}
-                            {{ end }}
-                        </p>
+        {{/* Use the $contributors variable we safely initialized */}}
+        {{ range $contributors }}
+            {{ if partial "is-primary-role.html" .role }}
+                 {{ $primaryContributors = $primaryContributors | append .person }}
+            {{ end }}
+        {{ end }}
+        {{/* Subtitle logic based on primary contributors */}}
+        {{/* (We will display them below, no need to build $subtitle string here) */}}
+    {{ else if eq $layoutType "person" }}
+      {{ with $page.Params.description }}{{ $subtitle = . }}{{ end }}
+    {{ end }}
+    {{/* --- End Subtitle Logic --- */}}
+
+    <div class="header-image" {{ if $hasImages }} style="background-image: url('{{ $coverPath | relURL }}')" {{ else }} style="background-color: var(--bg-secondary); height: 250px;" {{ end }}>
+        {{ if $hasImages }}<div class="header-overlay"></div>{{ end }}
+
+        {{ if eq $layoutType "work" }}
+            <div class="book-details-container">
+                <div class="book-details-inner">
+                    {{ if $hasImages }}
+                    <div class="book-poster-container">
+                        <img src="{{ $posterPath | relURL }}" alt="{{ $title }} poster" class="book-poster" onerror="this.style.display='none'; this.parentElement.style.display='none';">
+                    </div>
                     {{ end }}
-                    {{/* Pass contributors list to metadata display */}}
-                    {{ partial "metadata-display.html" (dict "page" $page "context" $context "contributors" $page.Params.contributors) }}
+                    <div class="book-metadata">
+                        <h1 class="book-metadata-title">{{ $title }}</h1>
+                        {{/* Display Primary Contributors using the list built above */}}
+                        {{ if $primaryContributors }}
+                            <p class="book-metadata-author">
+                                {{ range $index, $personName := $primaryContributors }}
+                                    {{ $personPage := "" }}
+                                    {{/* Ensure context and Site are valid before GetPage */}}
+                                    {{ if and $context $.Site }}
+                                        {{ $personPage = $.Site.GetPage (printf "/people/%s" ($personName | urlize)) }}
+                                    {{ end }}
+                                    {{ if $personPage }}<a href="{{ $personPage.RelPermalink }}">{{ $personName }}</a>{{ else }}{{ $personName }}{{ end }}
+                                    {{ if lt $index (sub (len $primaryContributors) 1) }}, {{ end }}
+                                {{ end }}
+                            </p>
+                        {{ end }}
+                        {{/* Pass contributors list (if it exists) to metadata display */}}
+                        {{ if $contributors }}
+                            {{ partial "metadata-display.html" (dict "page" $page "context" $context "contributors" $contributors) }}
+                        {{ end }}
+                    </div>
                 </div>
             </div>
-        </div>
-     {{ else if eq $layoutType "person" }}
-         <div class="person-details-container">
-             <div class="person-details-inner">
-                 {{ if $hasImages }}
-                 <div class="person-avatar-container">
-                     <img src="{{ $posterPath | relURL }}" alt="{{ $title }} portrait" class="person-avatar" onerror="this.style.display='none';">
-                 </div>
-                 {{ end }}
-                 <div class="person-metadata">
-                     <h1 class="person-name">{{ $title }}</h1>
-                     {{ with $subtitle }} {{/* Uses description here */}}
-                         <p class="person-description">{{ . }}</p>
+         {{ else if eq $layoutType "person" }}
+             <div class="person-details-container">
+                 <div class="person-details-inner">
+                     {{ if $hasImages }}
+                     <div class="person-avatar-container">
+                         <img src="{{ $posterPath | relURL }}" alt="{{ $title }} portrait" class="person-avatar" onerror="this.style.display='none';">
+                     </div>
                      {{ end }}
-                     <div class="person-meta-details">
-                         {{ with $page.Params.birth_date }}<span class="meta-item">Born: {{ . }}</span>{{ end }}
-                         {{ with $page.Params.death_date }}{{ if ne . "present" }}<span class="meta-item">Died: {{ . }}</span>{{ else }}<span class="meta-item">Living</span>{{ end }}{{ end }}
-                         {{ with $page.Params.nationality }}<span class="meta-item">Nationality: {{ . }}</span>{{ end }}
+                     <div class="person-metadata">
+                         <h1 class="person-name">{{ $title }}</h1>
+                         {{ with $subtitle }} {{/* Uses description */}}
+                             <p class="person-description">{{ . }}</p>
+                         {{ end }}
+                         <div class="person-meta-details">
+                             {{ with $page.Params.birth_date }}<span class="meta-item">Born: {{ . }}</span>{{ end }}
+                             {{ with $page.Params.death_date }}{{ if ne . "present" }}<span class="meta-item">Died: {{ . }}</span>{{ else }}<span class="meta-item">Living</span>{{ end }}{{ end }}
+                             {{ with $page.Params.nationality }}<span class="meta-item">Nationality: {{ . }}</span>{{ end }}
+                             {{/* Add other person meta if needed */}}
+                         </div>
                      </div>
                  </div>
              </div>
-         </div>
-     {{ end }}
-</div>
+         {{ end }}
+    </div>
+
+{{ else }}
+    {{/* --- OUTPUT WARNING IF PARTIAL CALLED WITHOUT PAGE CONTEXT --- */}}
+    <div style="border: 2px dashed red; padding: 10px; margin: 10px; background-color: #300; color: white;">
+        <strong>Warning:</strong> partial "single-header.html" was called without a valid page context ('.page' was nil).
+        <br>Called with layoutType: {{ .layoutType | default "Not Provided" }}
+    </div>
+{{ end }} {{/* End the top-level 'if $page' guard */}}

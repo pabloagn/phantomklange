@@ -1,8 +1,11 @@
 ---
-title: "The Brothers Karamazov"
-author: "Fyodor Dostoevsky"
-date: 2023-01-15
 type: "book"
+title: "The Brothers Karamazov"
+draft: false
+contributors:
+  - role: "author" # Use the key from data/contribution_roles.yaml
+    person: "Fyodor Dostoevsky" # Use the exact title of the person's page
+date: 2023-01-15
 book_id: "b634230"
 published_date: "1880"
 period: "19th Century"

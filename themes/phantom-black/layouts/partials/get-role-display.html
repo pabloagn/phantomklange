@@ -1,10 +1,25 @@
 {{/* ============================================================ */}}
 {{/* layouts/partials/get-role-display.html                     */}}
-{{/*                                                            */}}
 {{/* Gets the display name for a contribution role key.         */}}
 {{/* Input (.): Role key (string, e.g., "author")               */}}
 {{/* ============================================================ */}}
 {{ $roleKey := . }}
-{{ $roleData := index site.Data.contribution_roles $roleKey }}
-{{/* Use humanize as a fallback if display name or role key is missing */}}
-{{ return $roleData.display | default (humanize $roleKey | default $roleKey) }}
+{{ $display := "" }} {{/* Initialize display name */}}
+
+{{/* Ensure roleKey is a string and not empty */}}
+{{ if and (ne $roleKey nil) (reflect.IsKind $roleKey "string") (ne $roleKey "") }}
+    {{/* Try to find the role data */}}
+    {{ with index site.Data.contribution_roles $roleKey }}
+        {{/* Role key found in data file, get its display name or use key */}}
+        {{ $display = .display | default $roleKey }}
+    {{ else }}
+        {{/* Role key NOT found in data file, humanize the key as fallback */}}
+        {{ $display = humanize $roleKey }}
+    {{ end }}
+{{ else }}
+     {{/* Input was invalid (nil, not string, or empty) */}}
+     {{ warnf "Invalid role key '%v' passed to get-role-display.html" $roleKey }}
+     {{ $display = "[Invalid Role]" }} {{/* Indicate an error */}}
+{{ end }}
+
+{{ return $display }}
