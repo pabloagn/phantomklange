@@ -1,0 +1,66 @@
+# data/work_types.yaml
+
+# Hugo can access this data globally within any template using site.Data.work_types
+
+# Defines the canonical work types supported by the site.
+# Key: Used in front matter 'type' field and content directory names.
+# display_singular: User-friendly name for one item.
+# display_plural: User-friendly name for lists/archives.
+
+book:
+  display_singular: "Book"
+  display_plural: "Books"
+film:
+  display_singular: "Film"
+  display_plural: "Films"
+painting:
+  display_singular: "Painting"
+  display_plural: "Paintings"
+scent:
+  display_singular: "Scent"
+  display_plural: "Scents"
+photograph:
+  display_singular: "Photograph"
+  display_plural: "Photographs"
+musical_composition:
+  display_singular: "Musical Composition"
+  display_plural: "Musical Compositions"
+essay:
+  display_singular: "Essay"
+  display_plural: "Essays"
+play:
+  display_singular: "Play"
+  display_plural: "Plays"
+sculpture:
+  display_singular: "Sculpture"
+  display_plural: "Sculptures"
+print:
+  display_singular: "Print"
+  display_plural: "Prints"
+graphic_novel:
+  display_singular: "Graphic Novel"
+  display_plural: "Graphic Novels"
+digital_art:
+  display_singular: "Digital Art"
+  display_plural: "Digital Art"
+architecture:
+  display_singular: "Architectural Work"
+  display_plural: "Architecture"
+installation:
+  display_singular: "Installation"
+  display_plural: "Installations"
+sound_art:
+  display_singular: "Sound Art"
+  display_plural: "Sound Art"
+ceramics:
+  display_singular: "Ceramic Work"
+  display_plural: "Ceramics"
+fashion_collection:
+  display_singular: "Fashion Collection"
+  display_plural: "Fashion Collections"
+exhibition:
+  display_singular: "Exhibition"
+  display_plural: "Exhibitions"
+dance:
+  display_singular: "Dance Piece"
+  display_plural: "Dance"

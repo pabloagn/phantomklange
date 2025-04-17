@@ -1,90 +1,72 @@
-{{/* 
-Partial: Metadata Display
-Displays metadata grid for work types.
-Context: A dict containing "page" (the Page object) and "context" (the $)
-*/}}
+{{/* ============================================================ */}}
+{{/* layouts/partials/metadata-display.html                     */}}
+{{/*                                                            */}}
+{{/* Displays metadata grid for work types.                     */}}
+{{/* Input (.): Dict with:                                      */}}
+{{/*   - page (object): The current page object                 */}}
+{{/*   - context (object): The '$' context from the caller      */}}
+{{/*   - contributors (list): The page's contributors list      */}}
+{{/* ============================================================ */}}
 {{ $page := .page }}
 {{ $ := .context }}
+{{ $contributors := .contributors }}
+{{ $workType := $page.Type }}
 
 <div class="metadata-grid">
     <div class="metadata-column">
-        {{/* Common fields first */}}
-        {{ if eq $page.Type "book" }}
-            {{ with $page.Params.author }}
-                {{ partial "metadata-item.html" (dict "label" "Author" "value" . "link" (printf "/people/%s/" (. | urlize)) "context" $) }}
+        {{/* --- Display Non-Primary Contributors --- */}}
+        {{ range $contributors }}
+            {{ $roleKey := .role }}
+            {{ $isPrimary := partial "is-primary-role.html" $roleKey }}
+            {{ if not $isPrimary }}
+                {{ $roleDisplay := partial "get-role-display.html" $roleKey }}
+                {{ $personName := .person }}
+                {{ partial "metadata-item.html" (dict "label" $roleDisplay "value" $personName "link" (printf "/people/%s/" ($personName | urlize)) "context" $) }}
             {{ end }}
-             {{ with $page.Params.published_date }}
-                {{ partial "metadata-item.html" (dict "label" "Published" "value" .) }}
-            {{ end }}
-             {{ with $page.Params.publisher }}
-                {{ partial "metadata-item.html" (dict "label" "Publisher" "value" . "link" (printf "/publishers/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
-             {{ with $page.Params.page_count }}
-                {{ partial "metadata-item.html" (dict "label" "Pages" "value" .) }}
-            {{ end }}
-        {{ else if eq $page.Type "painting" }}
-            {{ with $page.Params.artist }}
-                {{ partial "metadata-item.html" (dict "label" "Artist" "value" . "link" (printf "/people/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
-            {{ with $page.Params.creation_date }}
-                {{ partial "metadata-item.html" (dict "label" "Created" "value" .) }}
-            {{ end }}
-            {{ with $page.Params.medium }}
-                {{ partial "metadata-item.html" (dict "label" "Medium" "value" .) }}
-            {{ end }}
-             {{ with $page.Params.dimensions }}
-                {{ partial "metadata-item.html" (dict "label" "Dimensions" "value" .) }}
-            {{ end }}
-        {{ else if eq $page.Type "scent" }}
-             {{ with $page.Params.perfumer }}
-                {{ partial "metadata-item.html" (dict "label" "Perfumer" "value" . "link" (printf "/people/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
-            {{ with $page.Params.launch_date }}
-                {{ partial "metadata-item.html" (dict "label" "Launched" "value" .) }}
-            {{ end }}
-             {{ with $page.Params.concentration }}
-                {{ partial "metadata-item.html" (dict "label" "Concentration" "value" .) }}
-            {{ end }}
-             {{ with $page.Params.notes_top }}
-                {{ partial "metadata-item.html" (dict "label" "Top Notes" "value" (delimit . ", ")) }}
-             {{ end }}
+        {{ end }}
+        {{/* --- End Non-Primary Contributors --- */}}
+
+        {{/* --- Common fields first column - Adjusted logic --- */}}
+        {{ if eq $workType "book" }}
+             {{ with $page.Params.published_date }}{{ partial "metadata-item.html" (dict "label" "Published" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.publisher }}{{ partial "metadata-item.html" (dict "label" "Publisher" "value" . "link" (printf "/publishers/%s/" (. | urlize)) "context" $) }}{{ end }}
+             {{ with $page.Params.page_count }}{{ partial "metadata-item.html" (dict "label" "Pages" "value" . "context" $) }}{{ end }}
+        {{ else if eq $workType "painting" }}
+             {{ with $page.Params.creation_date }}{{ partial "metadata-item.html" (dict "label" "Created" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.medium }}{{ partial "metadata-item.html" (dict "label" "Medium" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.dimensions }}{{ partial "metadata-item.html" (dict "label" "Dimensions" "value" . "context" $) }}{{ end }}
+        {{ else if eq $workType "scent" }}
+             {{ with $page.Params.launch_date }}{{ partial "metadata-item.html" (dict "label" "Launched" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.concentration }}{{ partial "metadata-item.html" (dict "label" "Concentration" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.notes_top }}{{ partial "metadata-item.html" (dict "label" "Top Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
+        {{ else if eq $workType "film" }}
+             {{ with $page.Params.release_date }}{{ partial "metadata-item.html" (dict "label" "Released" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.runtime }}{{ partial "metadata-item.html" (dict "label" "Runtime" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.country }}{{ partial "metadata-item.html" (dict "label" "Country" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.language }}{{ partial "metadata-item.html" (dict "label" "Language" "value" . "context" $) }}{{ end }}
+         {{/* Add conditions for other work types (architecture, etc.) as needed */}}
         {{ end }}
     </div>
     <div class="metadata-column">
-         {{/* Common fields second column */}}
-          {{ if eq $page.Type "book" }}
-            {{ with $page.Params.isbn10 }}
-                {{ partial "metadata-item.html" (dict "label" "ISBN-10" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true) }}
-            {{ end }}
-            {{ with $page.Params.isbn13 }}
-                {{ partial "metadata-item.html" (dict "label" "ISBN-13" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true) }}
-            {{ end }}
-             {{ with $page.Params.genre }}
-                {{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
-             {{ with $page.Params.period }}
-                {{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
-        {{ else if eq $page.Type "painting" }}
-            {{ with $page.Params.location }}
-                {{ partial "metadata-item.html" (dict "label" "Location" "value" .) }}
-            {{ end }}
-             {{ with $page.Params.period }}
-                {{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
-             {{ with $page.Params.genre }}
-                {{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
-        {{ else if eq $page.Type "scent" }}
-             {{ with $page.Params.notes_middle }}
-                {{ partial "metadata-item.html" (dict "label" "Middle Notes" "value" (delimit . ", ")) }}
-             {{ end }}
-             {{ with $page.Params.notes_base }}
-                {{ partial "metadata-item.html" (dict "label" "Base Notes" "value" (delimit . ", ")) }}
-             {{ end }}
-             {{ with $page.Params.genre }}
-                {{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}
-            {{ end }}
+         {{/* --- Common fields second column - Adjusted logic --- */}}
+         {{ if eq $workType "book" }}
+            {{ with $page.Params.isbn10 }}{{ partial "metadata-item.html" (dict "label" "ISBN-10" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true "context" $) }}{{ end }}
+            {{ with $page.Params.isbn13 }}{{ partial "metadata-item.html" (dict "label" "ISBN-13" "value" . "link" (printf "https://isbnsearch.org/isbn/%s" .) "external" true "context" $) }}{{ end }}
+             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+             {{ with $page.Params.period }}{{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}{{ end }}
+        {{ else if eq $workType "painting" }}
+            {{ with $page.Params.location }}{{ partial "metadata-item.html" (dict "label" "Location" "value" . "context" $) }}{{ end }}
+             {{ with $page.Params.period }}{{ partial "metadata-item.html" (dict "label" "Period" "value" . "link" (printf "/periods/%s/" (. | urlize)) "context" $) }}{{ end }}
+             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+        {{ else if eq $workType "scent" }}
+             {{ with $page.Params.notes_middle }}{{ partial "metadata-item.html" (dict "label" "Middle Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
+             {{ with $page.Params.notes_base }}{{ partial "metadata-item.html" (dict "label" "Base Notes" "value" (delimit . ", ") "context" $) }}{{ end }}
+             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+         {{ else if eq $workType "film" }}
+             {{ with $page.Params.genre }}{{ partial "metadata-item.html" (dict "label" "Genre" "value" . "link" (printf "/genres/%s/" (. | urlize)) "context" $) }}{{ end }}
+             {{ with $page.Params.studio }}{{ partial "metadata-item.html" (dict "label" "Studio" "value" . "context" $) }}{{ end }}
+             {{/* Add other film metadata if needed */}}
+         {{/* Add conditions for other work types */}}
         {{ end }}
     </div>
 </div>

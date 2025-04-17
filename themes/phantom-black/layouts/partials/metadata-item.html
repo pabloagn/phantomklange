@@ -1,36 +1,37 @@
-{{/*
-Partial: Metadata Item
-Displays a single label/value pair, optionally linked.
-Context: A dict with:
-    - label (string)
-    - value (string)
-    - link (string, optional): URL for the value
-    - external (bool, optional): If true, adds target="_blank"
-    - context (object, optional): The $ object, needed for GetPage checks
-*/}}
+{{/* ============================================================ */}}
+{{/* layouts/partials/metadata-item.html                        */}}
+{{/*                                                            */}}
+{{/* Displays a single metadata label/value pair, linked maybe. */}}
+{{/* Input (.): Dict with:                                      */}}
+{{/*   - label (string)                                         */}}
+{{/*   - value (any, usually string)                            */}}
+{{/*   - link (string, optional): URL for the value             */}}
+{{/*   - external (bool, optional): If true, adds target="_blank" */}}
+{{/*   - context (object, REQUIRED): The '$' context from caller*/}}
+{{/* ============================================================ */}}
 {{ $value := .value }}
 {{ $label := .label }}
 {{ $link := .link | default "" }}
 {{ $external := .external | default false }}
-{{ $ := .context }}
+{{ $ := .context }} {{/* Ensure top-level context is passed and used */}}
 
-{{ if $value }}
+{{ if and $value (ne (printf "%s" $value) "") }} {{/* Check if value is not nil and not empty string */}}
 <div class="metadata-item">
     <div class="metadata-label">{{ $label }}</div>
     <div class="metadata-value">
         {{ if $link }}
             {{ $targetPage := "" }}
             {{ if and (not $external) $ }} {{/* Check if internal link and context exists */}}
-                {{ $targetPage = $.Site.GetPage $link }}
+                {{ with $.Site.GetPage $link }}{{ $targetPage = . }}{{ end }}
             {{ end }}
 
             {{ if and $targetPage (not $external) }} {{/* Valid internal page found */}}
                  <a href="{{ $targetPage.RelPermalink }}" class="metadata-link">{{ $value }}</a>
             {{ else if $external }} {{/* External link */}}
                  <a href="{{ $link }}" class="metadata-link" target="_blank" rel="noopener noreferrer">{{ $value }}</a>
-            {{ else if not $external }} {{/* Internal link but page not found, or just a taxonomy link */}}
+            {{ else if not $external }} {{/* Internal link path (e.g., taxonomy) or page not found */}}
                  <a href="{{ $link | relURL }}" class="metadata-link">{{ $value }}</a>
-            {{ else }} {{/* Failsafe */}}
+            {{ else }} {{/* Failsafe - shouldn't be reached */}}
                 {{ $value }}
             {{ end }}
         {{ else }}

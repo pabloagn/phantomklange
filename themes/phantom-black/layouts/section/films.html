@@ -71,7 +71,7 @@
         {{/* NOTE: JS controls visibility, no pagination here */}}
         <div class="archive-grid book-grid" id="items-container"> 
             {{ range .Pages.ByTitle }} {{/* Render all initially, sort matching JS default */}}
-                {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "book" "site" $.Site) }}
+            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "film" "site" $.Site) }}
             {{ end }}
         </div>
         

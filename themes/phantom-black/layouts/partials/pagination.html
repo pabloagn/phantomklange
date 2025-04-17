@@ -1,0 +1,36 @@
+{{/* ============================================================ */}}
+{{/* layouts/partials/pagination.html                           */}}
+{{/*                                                            */}}
+{{/* Renders pagination controls for list pages.                */}}
+{{/* Context (.): The List Page object (.Paginator is expected) */}}
+{{/* ============================================================ */}}
+{{ $paginator := .Paginator }}
+{{ if gt $paginator.TotalPages 1 }}
+<nav class="pagination" aria-label="Pagination">
+    <ul class="pagination-list">
+        {{/* Prev Page Link */}}
+        <li class="page-item {{ if not $paginator.HasPrev }}disabled{{ end }}">
+            <a href="{{ if $paginator.HasPrev }}{{ $paginator.Prev.URL }}{{ else }}#{{ end }}" class="page-link prev" {{ if not $paginator.HasPrev }}aria-disabled="true" tabindex="-1"{{ else }}aria-label="Previous Page"{{ end }}>
+                « Prev
+            </a>
+        </li>
+
+        {{/* Page Number Links - Hugo's built-in logic */}}
+         {{ range $paginator.Pagers }}
+         <li class="page-item {{ if eq . $paginator }}active{{ end }}">
+            <a href="{{ .URL }}" class="page-link" {{ if eq . $paginator }}aria-current="page"{{ else }}aria-label="Page {{ .PageNumber }}"{{ end }}>
+                {{ .PageNumber }}
+            </a>
+        </li>
+         {{ end }}
+
+
+        {{/* Next Page Link */}}
+         <li class="page-item {{ if not $paginator.HasNext }}disabled{{ end }}">
+             <a href="{{ if $paginator.HasNext }}{{ $paginator.Next.URL }}{{ else }}#{{ end }}" class="page-link next" {{ if not $paginator.HasNext }}aria-disabled="true" tabindex="-1"{{ else }}aria-label="Next Page"{{ end }}>
+                 Next »
+             </a>
+         </li>
+    </ul>
+</nav>
+{{ end }}

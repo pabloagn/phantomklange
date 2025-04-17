@@ -1,0 +1,35 @@
+{{/* ============================================================ */}}
+{{/* layouts/partials/taxonomy-display.html                     */}}
+{{/*                                                            */}}
+{{/* Displays Categories and Tags for a given page.             */}}
+{{/* Context (.): The Page object                               */}}
+{{/* ============================================================ */}}
+{{ $page := . }}
+{{ $categories := $page.Params.categories }}
+{{ $tags := $page.Params.tags }}
+
+{{ if or $categories $tags }}
+<div class="page-taxonomy"> 
+  {{ with $categories }}
+  <div class="taxonomy-section categories-section">
+    <h4 class="taxonomy-title">Categories</h4> 
+    <ul class="taxonomy-list">
+      {{ range . }}
+      <li><a href="{{ "/categories/" | relURL }}{{ . | urlize }}" class="taxonomy-tag category-tag">{{ . }}</a></li>
+      {{ end }}
+    </ul>
+  </div>
+  {{ end }}
+  
+  {{ with $tags }}
+  <div class="taxonomy-section tags-section">
+    <h4 class="taxonomy-title">Tags</h4>
+    <ul class="taxonomy-list">
+      {{ range . }}
+      <li><a href="{{ "/tags/" | relURL }}{{ . | urlize }}" class="taxonomy-tag tag-tag">{{ . }}</a></li>
+      {{ end }}
+    </ul>
+  </div>
+  {{ end }}
+</div>
+{{ end }}

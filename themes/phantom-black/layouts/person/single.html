@@ -1,22 +1,97 @@
+{{/* ============================================================ */}}
+{{/* layouts/person/single.html                                 */}}
+{{/*                                                            */}}
+{{/* Template for displaying a single person and contributions. */}}
+{{/* ============================================================ */}}
 {{ define "main" }}
-<article class="person-single"> {{/* New class */}}
+<article class="person-single">
     {{ partial "single-header.html" (dict "page" . "layoutType" "person" "context" $) }}
 
     <div class="container">
-        <div class="book-content-container"> {{/* Reuse class for now */}}
-            {{/* Main content - Biography etc. */}}
-            <div class="book-content"> {{/* Reuse class */}}
+        <div class="book-content-container"> {{/* Reusing class, adjust if needed */}}
+            <div class="book-content">
                 {{ .Content }}
             </div>
 
+            {{/* --- BEGIN AUTO-GENERATED CONTRIBUTIONS BY ROLE --- */}}
+            {{ $personName := .Title }}
+            {{ $.Scratch.Delete "worksByRole" }} 
+            {{ $.Scratch.Set "worksByRole" (dict) }} 
+            {{ $.Scratch.Set "contributionCount" 0 }} 
+
+            {{/* Iterate through defined work types for efficiency */}}
+            {{ $workTypes := $.Site.Data.work_types }} 
+            {{ range $typeKey, $typeValue := $workTypes }}
+              {{ if ne $typeKey "person" }} {{/* Exclude person type itself */}}
+                {{ range where $.Site.RegularPages "Type" $typeKey }}
+                  {{ $workPage := . }} 
+                  {{ with .Params.contributors }}
+                      {{ range . }}
+                          {{ if eq .person $personName }}
+                              {{ $roleKey := .role }}
+                              {{ $currentMap := $.Scratch.Get "worksByRole" }}
+                              {{ $roleList := index $currentMap $roleKey | default slice }}
+                              {{ if not (in $roleList $workPage) }} 
+                                {{ $roleList = $roleList | append $workPage }}
+                                {{ $newMap := $currentMap | merge (dict $roleKey $roleList) }}
+                                {{ $.Scratch.Set "worksByRole" $newMap }}
+                                {{ $.Scratch.Add "contributionCount" 1 }} 
+                              {{ end }}
+                          {{ end }}
+                      {{ end }}
+                  {{ end }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+
+            {{ $groupedWorks := $.Scratch.Get "worksByRole" }}
+            {{ $contributionCount := $.Scratch.Get "contributionCount" }}
+
+            {{ if gt $contributionCount 0 }}
+            <div class="person-contributions"> 
+                <h2>Contributions ({{ $contributionCount }})</h2>
+                
+                {{ $sortedRoles := slice }}
+                {{ range $roleKey, $works := $groupedWorks }}
+                   {{ $roleDisplay := partial "get-role-display.html" $roleKey }}
+                   {{ $sortedRoles = $sortedRoles | append (dict "key" $roleKey "display" $roleDisplay "works" $works) }}
+                {{ end }}
+                
+                {{ range $sortedRoles | sort "display" "asc" }}
+                    {{ $roleDisplay := .display }}
+                    {{ $works := .works }}
+                    <div class="contribution-group">
+                        <h3>{{ $roleDisplay }} <span class="contribution-count">({{ len $works }})</span></h3>
+                        <ul>
+                            {{ range $works | sort ".Title" "asc" }}
+                            <li>
+                                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                                {{ $workDate := "" }}
+                                {{ if .Params.published_date }}{{ $workDate = .Params.published_date }}{{ end }}
+                                {{ if and (not $workDate) .Params.release_date }}{{ $workDate = .Params.release_date }}{{ end }}
+                                {{ if and (not $workDate) .Params.creation_date }}{{ $workDate = .Params.creation_date }}{{ end }}
+                                {{ if and (not $workDate) .Params.composition_date }}{{ $workDate = .Params.composition_date }}{{ end }}
+                                {{ if and (not $workDate) .Params.capture_date }}{{ $workDate = .Params.capture_date }}{{ end }}
+                                 {{ if and (not $workDate) .Params.premiere_date }}{{ $workDate = .Params.premiere_date }}{{ end }}
+                                 {{ if and (not $workDate) .Params.completion_date }}{{ $workDate = .Params.completion_date }}{{ end }}
+                                 {{ if and (not $workDate) .Params.launch_date }}{{ $workDate = .Params.launch_date }}{{ end }}
+                                 {{ if and (not $workDate) .Params.season_year }}{{ $workDate = .Params.season_year }}{{ end }}
+                                {{ with $workDate }}<span class="work-date"> ({{ . }})</span>{{ end }}
+                            </li>
+                            {{ end }}
+                        </ul>
+                    </div>
+                {{ end }}
+            </div>
+            {{ end }}
+            {{/* --- END AUTO-GENERATED CONTRIBUTIONS --- */}}
+
             {{/* Taxonomy if used */}}
             {{ if or .Params.categories .Params.tags }}
-                {{ partial "taxonomy-display.html" . }} {{/* Create this if needed */}}
+                {{ partial "taxonomy-display.html" . }}
             {{ end }}
         </div>
     </div>
-
-    {{/* Related Works Section */}}
-    {{ partial "related-content.html" . }}
+     {{/* Removed related content for person page to simplify */}}
 </article>
 {{ end }}

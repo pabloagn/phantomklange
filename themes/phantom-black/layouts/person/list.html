@@ -1,16 +1,15 @@
 {{ define "main" }}
 {{ partial "archive-hero.html" . }}
 
-{{/* Add Controls if needed later - Placeholder */}}
-{{/* partial "archive-controls.html" (dict "context" . "sectionType" "people") */}} 
+{{/* Optional Controls */}}
 
 <div class="container">
-    <div class="books-grid" id="people-container"> {{/* Adapt class if needed */}}
-        {{ $paginator := .Paginate .Pages }}
+    <div class="archive-grid person-grid" id="people-container"> 
+        {{ $paginator := .Paginate (.Pages.ByTitle) }} 
         {{ range $paginator.Pages }}
-            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "people" "site" $.Site) }}
+            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "person" "site" $.Site) }}
         {{ end }}
     </div>
-    {{ partial "pagination.html" . }} {{/* Assuming you have or will create a pagination partial */}}
+    {{ partial "pagination.html" . }} 
 </div>
 {{ end }}

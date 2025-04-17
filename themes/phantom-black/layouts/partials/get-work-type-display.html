@@ -1,0 +1,16 @@
+{{/* ============================================================ */}}
+{{/* layouts/partials/get-work-type-display.html                */}}
+{{/*                                                            */}}
+{{/* Gets the display name for a work type key.                 */}}
+{{/* Input (.): Dict with 'key' (string) & 'plural' (bool, opt) */}}
+{{/* ============================================================ */}}
+{{ $key := .key }}
+{{ $plural := .plural | default false }}
+{{ $typeData := index site.Data.work_types $key }}
+
+{{ $display := "" }}
+{{ if $typeData }}
+  {{ $display = cond $plural $typeData.display_plural $typeData.display_singular }}
+{{ end }}
+{{/* Fallback if key or display names are missing */}}
+{{ return $display | default (humanize $key) }}

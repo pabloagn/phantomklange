@@ -1,0 +1,12 @@
+{{ define "main" }}
+{{ partial "archive-hero.html" . }} 
+<div class="container">
+    <div class="archive-grid photograph-grid" id="photographs-container"> 
+        {{ $paginator := .Paginate .Pages.ByDate.Reverse }} {{/* Sort recent first? */}}
+        {{ range $paginator.Pages }}
+            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "photograph" "site" $.Site) }}
+        {{ end }}
+    </div>
+    {{ partial "pagination.html" . }} 
+</div>
+{{ end }}

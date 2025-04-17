@@ -1,0 +1,18 @@
+{{ define "main" }}
+<article class="work-single architecture-single">
+    {{ partial "single-header.html" (dict "page" . "layoutType" "work" "context" $) }}
+    <div class="container">
+        <div class="book-content-container"> 
+             {{ if findRE "<h[2-3]" .Content 1 }}
+             <div class="book-toc">
+                 <div class="toc-title">Contents</div>
+                 <nav id="TableOfContents">{{ .TableOfContents }}</nav>
+             </div>
+             {{ end }}
+            <div class="book-content">{{ .Content }}</div>
+            {{ partial "taxonomy-display.html" . }}
+        </div>
+    </div>
+    {{ partial "related-content.html" . }}
+</article>
+{{ end }}

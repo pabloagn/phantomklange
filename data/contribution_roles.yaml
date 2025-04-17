@@ -1,0 +1,270 @@
+# data/contribution_roles.yaml
+
+# Hugo can access this data globally within any template using site.Data.contribution_roles
+
+# Defines contributor roles, their display names, descriptions, 
+# applicable Hugo work types (content section keys), and primary status.
+
+# --- Primary Creative Roles ---
+author:
+  display: "Author"
+  description: "Primary writer of a text-based work."
+  applicable_work_types: [book, essay, play, graphic_novel]
+  primary_work_role: true
+painter:
+  display: "Painter"
+  description: "Creator of a painting."
+  applicable_work_types: [painting]
+  primary_work_role: true
+composer:
+  display: "Composer"
+  description: "Creator of a musical composition."
+  applicable_work_types: [musical_composition, sound_art, film] # Film scores
+  primary_work_role: true
+perfumer:
+  display: "Perfumer"
+  description: "Creator (Nose) of a perfume formula."
+  applicable_work_types: [scent]
+  primary_work_role: true
+photographer:
+  display: "Photographer"
+  description: "Person who captured a photograph."
+  applicable_work_types: [photograph]
+  primary_work_role: true
+choreographer:
+  display: "Choreographer"
+  description: "Creator of dance sequences and movements."
+  applicable_work_types: [dance] # Requires 'dance' work type if used
+  primary_work_role: true
+director:
+  display: "Director"
+  description: "Supervises the artistic/dramatic aspects of a production."
+  applicable_work_types: [film, play] 
+  primary_work_role: true
+playwright:
+  display: "Playwright"
+  description: "Writer of a play."
+  applicable_work_types: [play]
+  primary_work_role: true 
+sculptor:
+  display: "Sculptor"
+  description: "Creator of a sculpture."
+  applicable_work_types: [sculpture]
+  primary_work_role: true
+architect:
+  display: "Architect"
+  description: "Designer of an architectural work."
+  applicable_work_types: [architecture]
+  primary_work_role: true
+installation_artist:
+  display: "Installation Artist"
+  description: "Creator of an installation artwork."
+  applicable_work_types: [installation]
+  primary_work_role: true
+sound_artist:
+  display: "Sound Artist"
+  description: "Creator of a sound artwork."
+  applicable_work_types: [sound_art, installation] # Installations often have sound components
+  primary_work_role: true
+digital_artist:
+  display: "Digital Artist"
+  description: "Creator of a digital artwork."
+  applicable_work_types: [digital_art, installation] 
+  primary_work_role: true
+printmaker:
+  display: "Printmaker"
+  description: "Creator of a print using a matrix (etching, litho, etc.)."
+  applicable_work_types: [print]
+  primary_work_role: true
+ceramist:
+  display: "Ceramist"
+  description: "Creator of ceramic art."
+  applicable_work_types: [ceramics, sculpture] # Some overlap
+  primary_work_role: true
+fashion_designer:
+  display: "Fashion Designer"
+  description: "Creator of clothing and accessories collections."
+  applicable_work_types: [fashion_collection]
+  primary_work_role: true
+artist: 
+  display: "Artist"
+  description: "General creator of visual or conceptual artwork."
+  # Broad category for multi-disciplinary or uncategorized artists
+  applicable_work_types: [painting, sculpture, print, digital_art, photograph, installation, ceramics, sound_art] 
+  primary_work_role: true
+
+# --- Writing & Textual Roles ---
+screenwriter:
+  display: "Screenwriter"
+  description: "Writer of a screenplay."
+  applicable_work_types: [film]
+  primary_work_role: false 
+librettist:
+  display: "Librettist"
+  description: "Writer of the text (libretto) for an opera or musical work."
+  applicable_work_types: [musical_composition, play] 
+  primary_work_role: false
+translator:
+  display: "Translator"
+  description: "Translates a work from one language to another."
+  applicable_work_types: [book, play, essay]
+  primary_work_role: false
+editor:
+  display: "Editor"
+  description: "Prepares text for publication by correcting/modifying."
+  applicable_work_types: [book, essay]
+  primary_work_role: false
+theorist:
+  display: "Theorist"
+  description: "Contributor primarily known for theoretical concepts within a work."
+  applicable_work_types: [book, essay]
+  primary_work_role: false 
+
+# --- Visual & Design Roles (Secondary/Supporting) ---
+illustrator:
+  display: "Illustrator"
+  description: "Creates images accompanying text or concept."
+  applicable_work_types: [book, print, graphic_novel]
+  primary_work_role: false
+cover_artist:
+  display: "Cover Artist"
+  description: "Artist who designed the cover artwork."
+  applicable_work_types: [book, musical_composition] 
+  primary_work_role: false
+graphic_designer:
+  display: "Graphic Designer"
+  description: "Creator of visual concepts for communication (layouts, branding etc)."
+  applicable_work_types: [book, print, digital_art, exhibition] 
+  primary_work_role: false
+typographer:
+  display: "Typographer"
+  description: "Designer arranging type for print or digital media."
+  applicable_work_types: [book, print, graphic_novel]
+  primary_work_role: false
+letterer:
+  display: "Letterer"
+  description: "Artist who draws text, especially for comics."
+  applicable_work_types: [graphic_novel]
+  primary_work_role: false
+colorist:
+  display: "Colorist"
+  description: "Artist who adds color to black-and-white artwork."
+  applicable_work_types: [graphic_novel, print, film] # Film color grading? Maybe too niche.
+  primary_work_role: false
+calligrapher:
+  display: "Calligrapher"
+  description: "Artist specializing in decorative handwriting or lettering."
+  applicable_work_types: [print, book] 
+  primary_work_role: false
+cartographer:
+  display: "Cartographer"
+  description: "Creator of maps."
+  applicable_work_types: [book, print]
+  primary_work_role: false
+
+# --- Film Production Roles (Secondary/Supporting) ---
+producer:
+  display: "Producer"
+  description: "Oversees film production."
+  applicable_work_types: [film]
+  primary_work_role: false
+cinematographer:
+  display: "Cinematographer"
+  description: "Director of photography."
+  applicable_work_types: [film]
+  primary_work_role: false
+film_editor: # Renamed from just "Editor"
+  display: "Film Editor"
+  description: "Selects and assembles shots for a film."
+  applicable_work_types: [film]
+  primary_work_role: false
+art_director: 
+  display: "Art Director"
+  description: "Responsible for the overall visual style of a film or production."
+  applicable_work_types: [film, play, exhibition]
+  primary_work_role: false
+costume_designer:
+  display: "Costume Designer"
+  description: "Designs costumes for a production."
+  applicable_work_types: [film, play, fashion_collection] # Can overlap with fashion designer
+  primary_work_role: false
+set_designer:
+  display: "Set Designer"
+  description: "Designs the sets for a production."
+  applicable_work_types: [film, play, installation]
+  primary_work_role: false
+
+# --- Music Roles (Secondary/Supporting/Performance) ---
+arranger:
+  display: "Arranger"
+  description: "Adapts a musical composition for different forces."
+  applicable_work_types: [musical_composition]
+  primary_work_role: false
+orchestrator:
+  display: "Orchestrator"
+  description: "Assigns instruments to parts of a composition."
+  applicable_work_types: [musical_composition]
+  primary_work_role: false
+conductor:
+  display: "Conductor"
+  description: "Leads a musical performance."
+  applicable_work_types: [musical_composition] 
+  primary_work_role: false
+musician:
+  display: "Musician"
+  description: "Performer playing a musical instrument or singing."
+  applicable_work_types: [musical_composition, film, sound_art, installation] 
+  primary_work_role: false
+sound_engineer:
+  display: "Sound Engineer"
+  description: "Technical handling of sound recording or reproduction."
+  applicable_work_types: [musical_composition, film, sound_art]
+  primary_work_role: false
+
+# --- Performance Roles ---
+performer: 
+  display: "Performer"
+  description: "Person who executes a performance (actor, dancer, musician, etc.)."
+  applicable_work_types: [film, play, dance, musical_composition, installation, sound_art] # Requires 'dance' type if used
+  primary_work_role: false
+actor:
+  display: "Actor"
+  description: "Performer in a film or play."
+  applicable_work_types: [film, play]
+  primary_work_role: false 
+dancer:
+  display: "Dancer"
+  description: "Performer of dance."
+  applicable_work_types: [dance] # Requires 'dance' type
+  primary_work_role: false
+
+# --- Other Roles ---
+curator:
+  display: "Curator"
+  description: "Selects/organizes works for an exhibition/collection."
+  applicable_work_types: [exhibition] # Primary role for the 'exhibition' work type
+  primary_work_role: true # For the exhibition itself
+programmer:
+  display: "Programmer"
+  description: "Developer of software/digital art components."
+  applicable_work_types: [digital_art, installation]
+  primary_work_role: false
+interviewer:
+  display: "Interviewer"
+  description: "Person conducting an interview."
+  applicable_work_types: [book, film, essay]
+  primary_work_role: false
+collaborator:
+  display: "Collaborator"
+  description: "General term for a significant contributor without a specific role."
+  # Applicable to virtually any work type where needed
+  applicable_work_types: [book, film, painting, scent, photograph, musical_composition, essay, play, sculpture, print, graphic_novel, digital_art, architecture, installation, sound_art, ceramics, fashion_collection, exhibition] 
+  primary_work_role: false
+
+# --- Roles Not Included (Considerations) ---
+# subject: Not a creation role. Could be a separate taxonomy 'subjects' or a front matter field 'depicts: [Person Title]'.
+# model: Not typically credited as a 'creator' of the work itself.
+# interviewee: Same as subject.
+# binder: Relates to physical manifestation, not creation of the content/concept.
+# conservator: Preservation, not creation.
+# patron: Funding, not creation. Consider a 'commissioned_by' field?

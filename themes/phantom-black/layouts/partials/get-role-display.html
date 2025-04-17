@@ -1,0 +1,10 @@
+{{/* ============================================================ */}}
+{{/* layouts/partials/get-role-display.html                     */}}
+{{/*                                                            */}}
+{{/* Gets the display name for a contribution role key.         */}}
+{{/* Input (.): Role key (string, e.g., "author")               */}}
+{{/* ============================================================ */}}
+{{ $roleKey := . }}
+{{ $roleData := index site.Data.contribution_roles $roleKey }}
+{{/* Use humanize as a fallback if display name or role key is missing */}}
+{{ return $roleData.display | default (humanize $roleKey | default $roleKey) }}

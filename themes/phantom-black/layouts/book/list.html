@@ -1,36 +1,15 @@
 {{ define "main" }}
+{{ partial "archive-hero.html" . }} 
+
+{{/* Optional: Add Controls/Filtering - see section/books.html for example */}}
+
 <div class="container">
-    <header class="page-header">
-        <h1>{{ .Title }}</h1>
-        {{ with .Description }}
-        <div class="taxonomy-description">{{ . }}</div>
-        {{ end }}
-    </header>
-   
-    <div class="book-grid">
-        {{ range .Pages }}
-        <article class="book-card">
-            <a href="{{ .RelPermalink }}">
-                {{ $folderName := printf "%s-%s" .Params.book_id (.Title | urlize) }}
-                {{ $posterPath := printf "/images/books/%s/poster.jpg" $folderName }}
-                
-                {{ if .Params.featured_image }}
-                <img src="{{ .Params.featured_image }}" alt="{{ .Title }}" class="book-cover">
-                {{ else if .Params.book_id }}
-                <img src="{{ $posterPath }}" alt="{{ .Title }}" class="book-cover">
-                {{ else }}
-                <div class="book-cover-placeholder"></div>
-                {{ end }}
-                
-                <div class="book-info">
-                    <h2 class="book-title">{{ .Title }}</h2>
-                    {{ with .Params.author }}
-                    <p class="book-author">{{ . }}</p>
-                    {{ end }}
-                </div>
-            </a>
-        </article>
+    <div class="archive-grid book-grid" id="books-container"> 
+        {{ $paginator := .Paginate .Pages.ByTitle }} {{/* Default sort by title */}}
+        {{ range $paginator.Pages }}
+            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "book" "site" $.Site) }}
         {{ end }}
     </div>
+    {{ partial "pagination.html" . }} 
 </div>
 {{ end }}

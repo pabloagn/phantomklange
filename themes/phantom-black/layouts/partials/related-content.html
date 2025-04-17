@@ -1,91 +1,63 @@
-{{/*
-Partial: Related Content Section
-Context (.): The Single Page object
-Params: None explicit, uses page context.
-*/}}
+{{/* ============================================================ */}}
+{{/* layouts/partials/related-content.html                      */}}
+{{/*                                                            */}}
+{{/* Displays related content section.                          */}}
+{{/* Context (.): The Single Page object                        */}}
+{{/* ============================================================ */}}
 {{ $page := . }}
-{{ $related := "" }}
-{{ $relatedTitle := "You May Also Like" }} {{/* DECLARE with a default value BEFORE the ifs */}}
+{{ $related := slice }} {{/* Initialize as slice */}}
+{{ $relatedTitle := "You May Also Like" }} {{/* Default title */}}
+{{ $maxItems := 3 }} {{/* Max related items to show */}}
 
 {{/* Find related content based on page type */}}
 {{ if eq $page.Type "person" }}
-    {{/* Find works by this person */}}
     {{ $personName := $page.Title }}
-    {{ $relatedWorks := where $.Site.RegularPages "Params.author" $personName }}
-    {{ $relatedWorks = $relatedWorks | append (where $.Site.RegularPages "Params.artist" $personName) }}
-    {{ $relatedWorks = $relatedWorks | append (where $.Site.RegularPages "Params.director" $personName) }}
-    {{ $relatedWorks = $relatedWorks | append (where $.Site.RegularPages "Params.perfumer" $personName) }}
-    {{ $related = $relatedWorks | uniq }}
-    {{ $relatedTitle = printf "Works by %s" $personName }} {{/* REASSIGN using = */}}
+    {{ $relatedWorks := slice }}
+    {{ range $typeKey, $typeValue := site.Data.work_types }}
+      {{ if ne $typeKey "person" }}
+        {{ range where site.RegularPages "Type" $typeKey }}
+          {{ $workPage := . }}
+          {{ with .Params.contributors }}
+            {{ range . }}
+              {{ if eq .person $personName }}
+                {{/* Add work page only if it's not already added */}}
+                {{ if not (in $relatedWorks $workPage) }}
+                   {{ $relatedWorks = $relatedWorks | append $workPage }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+    {{ $related = $relatedWorks | uniq | first $maxItems }} {{/* Limit results */}}
+    {{ if $related }} {{ $relatedTitle = printf "Works by %s" $personName }} {{ end }}
 
 {{ else if eq $page.Type "essay" }}
-     {{/* Find works mentioned in the essay */}}
      {{ $relatedPages := slice }}
      {{ range $page.Params.related_works }}
-         {{ $relatedPage := $.Site.GetPage . }}
-         {{ if $relatedPage }}
-             {{ $relatedPages = $relatedPages | append $relatedPage }}
+         {{ with site.GetPage . }}
+             {{ $relatedPages = $relatedPages | append . }}
          {{ end }}
      {{ end }}
-     {{ $related = $relatedPages }}
-     {{ $relatedTitle = "Mentioned Works" }} {{/* REASSIGN using = */}}
+     {{ $related = $relatedPages | first $maxItems }}
+     {{ if $related }} {{ $relatedTitle = "Mentioned Works" }} {{ end }}
 
 {{ else }} {{/* Default: Find related by tags/categories for works */}}
-    {{ $related = $page.Site.RegularPages.Related $page | first 5 }}
-    {{/* $relatedTitle keeps its default value "You May Also Like" */}}
+    {{ $related = $page.Site.RegularPages.Related $page | first $maxItems }}
+    {{/* $relatedTitle keeps its default value if related items found */}}
 {{ end }}
 
 
 {{ if gt (len $related) 0 }}
 <div class="related-section">
   <div class="container">
-    {{/* Line 41: $relatedTitle is now defined in this scope */}}
-    <h2 class="related-title">{{ $relatedTitle }}</h2> 
-    <div class="related-books"> {{/* Reuse class for now */}}
+    <h2 class="related-title">{{ $relatedTitle }}</h2>
+    {{/* Use archive-grid class structure for consistency */}}
+    <div class="archive-grid related-items-grid"> 
       {{ range $related }}
-      <article class="related-book"> {{/* Reuse class */}}
-        <a href="{{ .RelPermalink }}" class="related-book-link">
-          <div class="related-book-cover">
-             {{ $relSectionType := .Type }}
-             {{ $relItemId := "" }}
-             {{ $relImageDir := "" }}
-             {{ $relIdParam := "" }}
-             {{ $relFallbackTitleSlug := .Title | urlize }}
-      
-             {{ if eq $relSectionType "book" }}{{ $relIdParam = "book_id" }}{{ $relImageDir = "books" }}{{ end }}
-             {{ if eq $relSectionType "person" }}{{ $relIdParam = "person_id" }}{{ $relImageDir = "people" }}{{ end }}
-             {{ if eq $relSectionType "painting" }}{{ $relIdParam = "painting_id" }}{{ $relImageDir = "paintings" }}{{ end }}
-             {{ if eq $relSectionType "scent" }}{{ $relIdParam = "scent_id" }}{{ $relImageDir = "scents" }}{{ end }}
-      
-             {{/* CORRECTED: Use index MAP KEY syntax */}}
-             {{ $relItemId = index .Params $relIdParam }} 
-      
-             {{ $relFolderName := cond (ne $relItemId "") (printf "%s-%s" $relItemId $relFallbackTitleSlug) $relFallbackTitleSlug }}
-             {{ $relPosterPath := printf "/images/%s/%s/poster.jpg" $relImageDir $relFolderName }}
-             {{ $relHasPoster := and (ne $relImageDir "") (ne $relItemId "") }} {{/* Check if we expect a poster based on ID existing */}}
-      
-      
-            {{ if .Params.featured_image }}
-              <img src="{{ .Params.featured_image | relURL }}" alt="{{ .Title }}" loading="lazy" class="related-book-img">
-            {{ else if $relHasPoster }}
-              <img src="{{ $relPosterPath | relURL }}" alt="{{ .Title }}" loading="lazy" class="related-book-img"
-                   onerror="this.style.display='none'; this.parentElement.classList.add('book-cover-placeholder');">
-            {{ else }}
-              <div class="book-cover-placeholder" style="padding-bottom: 153.45%;"></div> {{/* Placeholder with aspect ratio */}}
-            {{ end }}
-          </div>
-          <div class="related-book-info">
-            <h3 class="related-book-title">{{ .Title }}</h3>
-            {{ $relSubtitle := "" }}
-            {{ if eq .Type "book" }}{{ $relSubtitle = .Params.author }}{{ end }}
-            {{ if eq .Type "painting" }}{{ $relSubtitle = .Params.artist }}{{ end }}
-            {{ if eq .Type "scent" }}{{ $relSubtitle = .Params.house }}{{ end }}
-             {{ with $relSubtitle }}
-                <p class="related-book-author">by {{ . }}</p> {{/* Assuming 'by' fits most */}}
-             {{ end }}
-          </div>
-        </a>
-      </article>
+        {{/* Call the standard grid item partial */}}
+        {{ partial "archive-grid-item.html" (dict "page" . "sectionType" .Type "site" $.Site) }}
       {{ end }}
     </div>
   </div>

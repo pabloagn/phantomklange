@@ -1,10 +1,10 @@
 {{ define "main" }}
-{{ partial "archive-hero.html" . }}
+{{ partial "archive-hero.html" . }} 
 <div class="container">
-    <div class="books-grid" id="scents-container"> 
-        {{ $paginator := .Paginate .Pages }}
+    <div class="archive-grid scent-grid" id="scents-container"> 
+        {{ $paginator := .Paginate .Pages.ByTitle }} 
         {{ range $paginator.Pages }}
-            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "scents" "site" $.Site) }}
+            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "scent" "site" $.Site) }}
         {{ end }}
     </div>
     {{ partial "pagination.html" . }} 

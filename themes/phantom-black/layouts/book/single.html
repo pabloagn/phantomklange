@@ -1,189 +1,31 @@
 {{ define "main" }}
-<article class="book-single">
-  <!-- Header Image Section with dreamy overlay effect -->
-  {{ $bookTitle := .Title }}
-  {{ $bookId := .Params.book_id }}
-  {{ $folderName := printf "%s-%s" .Params.book_id (.Title | urlize) }}
-  {{ $coverPath := printf "/images/books/%s/cover.jpg" $folderName }}
-  {{ $posterPath := printf "/images/books/%s/poster.jpg" $folderName }}
-  
-  <div class="header-image" style="background-image: url('{{ $coverPath }}')">
-    <div class="header-overlay"></div>
-    
-    <div class="book-details-container">
-      <div class="book-details-inner">
-        <div class="book-poster-container">
-          <img src="{{ $posterPath }}" alt="{{ $bookTitle }} cover" class="book-poster">
-        </div>
-        
-        <div class="book-metadata">
-          <h1 class="book-metadata-title">{{ .Title }}</h1>
-          {{ with .Params.author }}
-          <p class="book-metadata-author">by {{ . }}</p>
-          {{ end }}
+<article class="work-single book-single"> {{/* Added generic + specific class */}}
+    {{/* Call the refactored header partial */}}
+    {{ partial "single-header.html" (dict "page" . "layoutType" "work" "context" $) }}
 
-          <div class="metadata-grid">
-            <div class="metadata-column">
-                {{ with .Params.author }}
-                <div class="metadata-item">
-                    <div class="metadata-label">AUTHOR</div>
-                    <div class="metadata-value">
-                    <a href="/people/{{ . | urlize }}/" class="metadata-link">{{ . }}</a>
-                    </div>
-                </div>
-                {{ end }}
-              
-                {{ with .Params.published_date }}
-                <div class="metadata-item">
-                <div class="metadata-label">PUBLISHED</div>
-                <div class="metadata-value">{{ . }}</div>
-                </div>
-                {{ end }}
-              
-                {{ with .Params.publisher }}
-                <div class="metadata-item">
-                <div class="metadata-label">PUBLISHER</div>
-                <div class="metadata-value">
-                  <a href="/publishers/{{ . | urlize }}/" class="metadata-link">{{ . }}</a>
-                </div>
-                </div>
-                {{ end }}
-                
-                {{ with .Params.page_count }}
-                <div class="metadata-item">
-                <div class="metadata-label">PAGES</div>
-                <div class="metadata-value">{{ . }}</div>
-                </div>
-                {{ end }}
-            </div>
-            
-            <div class="metadata-column">
-                {{ with .Params.isbn10 }}
-                <div class="metadata-item">
-                  <div class="metadata-label">ISBN-10</div>
-                  <div class="metadata-value">
-                    <a href="https://isbnsearch.org/isbn/{{ . }}" class="metadata-link" target="_blank" rel="noopener noreferrer">{{ . }}</a>
-                  </div>
-                </div>
-                {{ end }}
-
-                {{ with .Params.isbn13 }}
-                <div class="metadata-item">
-                  <div class="metadata-label">ISBN-13</div>
-                  <div class="metadata-value">
-                    <a href="https://isbnsearch.org/isbn/{{ . }}" class="metadata-link" target="_blank" rel="noopener noreferrer">{{ . }}</a>
-                  </div>
-                </div>
-                {{ end }}
-                
-
-                
-                {{ with .Params.genre }}
-                <div class="metadata-item">
-                <div class="metadata-label">GENRE</div>
-                <div class="metadata-value">
-                    <a href="/genres/{{ . | urlize }}/" class="metadata-link">{{ . }}</a>
-                </div>
-                </div>
-                {{ end }}
-                
-                {{ with .Params.period }}
-                <div class="metadata-item">
-                <div class="metadata-label">PERIOD</div>
-                <div class="metadata-value">
-                    <a href="/periods/{{ . | urlize }}/" class="metadata-link">{{ . }}</a>
-                </div>
-                </div>
-                {{ end }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Book Content -->
-  <div class="container">
-    <div class="book-content-container">
-      <!-- Table of contents if needed -->
-      {{ if findRE "<h[2-3]" .Content 1 }}
-      <div class="book-toc">
-        <div class="toc-title">Contents</div>
-        <nav id="TableOfContents">
-          {{ .TableOfContents }}
-        </nav>
-      </div>
-      {{ end }}
-      
-      <!-- Main content -->
-      <div class="book-content">
-        {{ .Content }}
-      </div>
-      
-      <!-- Taxonomy section -->
-      {{ if or .Params.categories .Params.tags }}
-      <div class="book-taxonomy">
-        {{ with .Params.categories }}
-        <div class="taxonomy-section">
-          <div class="taxonomy-title">Categories</div>
-          <ul class="taxonomy-list">
-            {{ range . }}
-            <li><a href="/categories/{{ . | urlize }}/" class="taxonomy-tag">{{ . }}</a></li>
-            {{ end }}
-          </ul>
-        </div>
-        {{ end }}
-        
-        {{ with .Params.tags }}
-        <div class="taxonomy-section">
-          <div class="taxonomy-title">Tags</div>
-          <ul class="taxonomy-list">
-            {{ range . }}
-            <li><a href="/tags/{{ . | urlize }}/" class="taxonomy-tag">{{ . }}</a></li>
-            {{ end }}
-          </ul>
-        </div>
-        {{ end }}
-      </div>
-      {{ end }}
-    </div>
-  </div>
-  
-  <!-- Related Books Section -->
-  {{ $currentTitle := .Title }}
-  {{ $relatedBooks := where (where .Site.RegularPages "Section" "books") "Title" "ne" $currentTitle }}
-
-  {{ if gt (len $relatedBooks) 0 }}
-  <div class="related-section">
     <div class="container">
-      <h2 class="related-title">You May Also Like</h2>
-      
-      <div class="related-books">
-        {{ range first 3 $relatedBooks }}
-        <article class="related-book">
-          <a href="{{ .RelPermalink }}" class="related-book-link">
-            <div class="related-book-cover">
-              <img 
-                src="/images/books/{{ urlize .Title }}/poster.jpg" 
-                alt="{{ .Title }}" 
-                width="782" 
-                height="1200"
-                loading="lazy"
-                class="related-book-img"
-              >
+        <div class="book-content-container"> {{/* Reusing class, adjust if needed */}}
+             {{/* Table of contents logic */}}
+             {{ if findRE "<h[2-3]" .Content 1 }}
+             <div class="book-toc">
+                 <div class="toc-title">Contents</div>
+                 <nav id="TableOfContents">
+                     {{ .TableOfContents }}
+                 </nav>
+             </div>
+             {{ end }}
+
+            {{/* Main content display */}}
+            <div class="book-content">
+                {{ .Content }}
             </div>
-            <div class="related-book-info">
-              <h3 class="related-book-title">{{ .Title }}</h3>
-              {{ with .Params.author }}
-              <p class="related-book-author">by {{ . }}</p>
-              {{ end }}
-            </div>
-          </a>
-        </article>
-        {{ end }}
-      </div>
+
+            {{/* Taxonomy Display */}}
+            {{ partial "taxonomy-display.html" . }}
+        </div>
     </div>
-  </div>
-  {{ end }}
+
+    {{/* Related Content */}}
+    {{ partial "related-content.html" . }}
 </article>
 {{ end }}

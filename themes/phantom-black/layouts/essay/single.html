@@ -3,9 +3,25 @@
     <header class="essay-header">
         <h1>{{ .Title }}</h1>
         <div class="essay-meta">
-            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format $.Site.Params.dateFormat | default "Jan 2, 2006" }}</time>
-            {{ with .Params.categories }} | Categories: {{ range . }}<a href="{{ "/categories/" | relURL }}{{ . | urlize }}">{{ . }}</a> {{ end }}{{ end }}
-             {{ with .Params.tags }} | Tags: {{ range . }}<a href="{{ "/tags/" | relURL }}{{ . | urlize }}">{{ . }}</a> {{ end }}{{ end }}
+            {{/* Display author(s) */}}
+            {{ $authors := slice }}
+            {{ range .Params.contributors }}
+                {{ if eq .role "author" }} {{ $authors = $authors | append .person }} {{ end }}
+            {{ end }}
+            {{ if $authors }}
+                <span class="essay-author">
+                    By 
+                    {{ range $index, $name := $authors }}
+                        {{ $personPage := $.Site.GetPage (printf "/people/%s" ($name | urlize)) }}
+                        {{ if $personPage }}<a href="{{ $personPage.RelPermalink }}">{{ $name }}</a>{{ else }}{{ $name }}{{ end }}
+                        {{ if lt $index (sub (len $authors) 1) }}, {{ end }}
+                    {{ end }}
+                </span> |
+            {{ end }}
+
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format ($.Site.Params.dateFormat | default "Jan 2, 2006") }}</time>
+            {{ with .Params.categories }} | Categories: {{ range $index, $cat := . }}{{ if gt $index 0 }}, {{ end }}<a href="{{ "/categories/" | relURL }}{{ . | urlize }}">{{ . }}</a>{{ end }}{{ end }}
+             {{ with .Params.tags }} | Tags: {{ range $index, $tag := . }}{{ if gt $index 0 }}, {{ end }}<a href="{{ "/tags/" | relURL }}{{ . | urlize }}">{{ . }}</a>{{ end }}{{ end }}
         </div>
     </header>
     <div class="book-content"> {{/* Reuse content styling */}}

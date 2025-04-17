@@ -1,0 +1,1009 @@
+# data/metadata_definitions.yaml
+# Source of truth for front matter metadata fields for each content type.
+# Excludes standard Hugo fields like 'title', 'date', 'draft', 'type', 'lastmod' unless specifically needed.
+
+person:
+  fields:
+    person_id:
+      display_name: "Person ID"
+      type: "string"
+      required: true
+      description: "Unique identifier, matches image folder slug (e.g., 'fyodor-dostoevsky')."
+      example: "fyodor-dostoevsky"
+    description:
+      display_name: "Short Description"
+      type: "string"
+      required: false
+      description: "Brief bio or description for list views/meta tags."
+      example: "Influential Soviet filmmaker..."
+    birth_date:
+      display_name: "Birth Date"
+      type: "string" # Using string for flexibility (YYYY, YYYY-MM-DD)
+      required: false
+      description: "Year or full date of birth."
+      example: "1932-04-04"
+    death_date:
+      display_name: "Death Date"
+      type: "string" # Using string for flexibility (YYYY, YYYY-MM-DD, 'present')
+      required: false
+      description: "Year or full date of death, or 'present' if living."
+      example: "1986-12-29"
+    nationality:
+      display_name: "Nationality"
+      type: "string"
+      required: false
+      example: "Soviet"
+    notable_roles: # Could also be inferred from contributions later
+      display_name: "Notable Roles"
+      type: "list[string]"
+      required: false
+      description: "Manually specified primary roles if needed for display."
+      example: ["Director", "Writer"]
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+      description: "Descriptive tags related to the person."
+      example: ["Filmmaker", "Art House"]
+    # Add other person-specific fields like website, etc.
+
+book:
+  fields:
+    book_id:
+      display_name: "Book ID"
+      type: "string"
+      required: true
+      description: "Unique identifier, used in image folder slug."
+      example: "b634230"
+    contributors:
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true # A work usually has at least one primary contributor
+      description: "List of people and their roles (author, translator, etc.)."
+      map_structure:
+        role: { type: "string", required: true, description: "Role key from data/contribution_roles.yaml" }
+        person: { type: "string", required: true, description: "Full title of the person's content file." }
+      example: [{ role: "author", person: "Fyodor Dostoevsky" }]
+    published_date:
+      display_name: "Published Date"
+      type: "string" # Using string for YYYY or full date flexibility
+      required: false
+      description: "Year or approximate date of first publication."
+      example: "1880"
+    period:
+      display_name: "Period"
+      type: "string" # Could be taxonomy later if needed
+      required: false
+      description: "Literary or historical period."
+      example: "19th Century"
+    page_count:
+      display_name: "Page Count"
+      type: "integer" # Or string if you have variations like 'approx. 300'
+      required: false
+      example: 824
+    isbn10:
+      display_name: "ISBN-10"
+      type: "string"
+      required: false
+      example: "0374528373"
+    isbn13:
+      display_name: "ISBN-13"
+      type: "string"
+      required: false
+      example: "9780374528379"
+    genre: # Use tags/categories for multiple genres
+      display_name: "Primary Genre" 
+      type: "string" # Could be taxonomy later if needed
+      required: false
+      description: "The main literary genre."
+      example: "Classic Literature"
+    publisher: # Could be taxonomy later if needed
+      display_name: "Publisher"
+      type: "string"
+      required: false
+      example: "Farrar, Straus and Giroux"
+    rating:
+      display_name: "Rating"
+      type: "integer" # Assuming 1-5 stars
+      required: false
+      example: 5
+    read:
+      display_name: "Read Status"
+      type: "boolean"
+      required: false
+      example: true
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string" # Path relative to static/ or site root
+      required: false
+      description: "Optional path to a specific image to use instead of generated poster path."
+      example: "/images/custom/my-book-cover.jpg"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+
+film:
+  fields:
+    film_id:
+      display_name: "Film ID"
+      type: "string"
+      required: true
+      description: "Unique identifier, used in image folder slug."
+      example: "stalker-1979"
+    contributors:
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      description: "List of people and their roles (director, writer, actor, etc.)."
+      map_structure:
+        role: { type: "string", required: true, description: "Role key from data/contribution_roles.yaml" }
+        person: { type: "string", required: true, description: "Full title of the person's content file." }
+      example: [{ role: "director", person: "Andrei Tarkovsky" }]
+    release_date:
+      display_name: "Release Date"
+      type: "string" # Usually year (YYYY)
+      required: false
+      example: "1979"
+    runtime:
+      display_name: "Runtime"
+      type: "string" # e.g., "162 min"
+      required: false
+      example: "162 min"
+    country:
+      display_name: "Country"
+      type: "string" # Or list[string] for co-productions
+      required: false
+      example: "Soviet Union"
+    language:
+      display_name: "Language(s)"
+      type: "string" # Or list[string]
+      required: false
+      example: "Russian"
+    studio:
+      display_name: "Studio"
+      type: "string"
+      required: false
+      example: "Mosfilm"
+    genre: # Use tags/categories for multiple
+      display_name: "Primary Genre"
+      type: "string"
+      required: false
+      example: "Science Fiction"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+painting:
+  fields:
+    painting_id:
+      display_name: "Painting ID"
+      type: "string"
+      required: true
+      example: "van-gogh-starry-night"
+    contributors: # Primarily the 'artist' role
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'artist'" }
+        person: { type: "string", required: true, description: "Artist's person page title." }
+      example: [{ role: "artist", person: "Vincent van Gogh" }]
+    creation_date:
+      display_name: "Creation Date"
+      type: "string" # YYYY or "c. YYYY"
+      required: false
+      example: "1889"
+    medium:
+      display_name: "Medium"
+      type: "string" # Or list[string] for mixed media
+      required: false
+      example: "Oil on canvas"
+    dimensions:
+      display_name: "Dimensions"
+      type: "string"
+      required: false
+      example: "73.7 cm × 92.1 cm"
+    location:
+      display_name: "Current Location"
+      type: "string"
+      required: false
+      example: "Museum of Modern Art, New York"
+    period:
+      display_name: "Art Period"
+      type: "string"
+      required: false
+      example: "Post-Impressionism"
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Landscape"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+scent:
+  fields:
+    scent_id:
+      display_name: "Scent ID"
+      type: "string"
+      required: true
+      example: "chanel-no-5"
+    contributors: # Primarily the 'perfumer' role
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'perfumer'" }
+        person: { type: "string", required: true, description: "Perfumer's person page title." }
+      example: [{ role: "perfumer", person: "Ernest Beaux" }]
+    house:
+      display_name: "Perfume House"
+      type: "string"
+      required: false
+      example: "Chanel"
+    launch_date:
+      display_name: "Launch Date"
+      type: "string" # YYYY
+      required: false
+      example: "1921"
+    concentration:
+      display_name: "Concentration"
+      type: "string"
+      required: false
+      example: "Eau de Parfum"
+    notes_top:
+      display_name: "Top Notes"
+      type: "list[string]"
+      required: false
+      example: ["Aldehydes", "Ylang-Ylang", "Neroli"]
+    notes_middle:
+      display_name: "Middle Notes"
+      type: "list[string]"
+      required: false
+      example: ["Jasmine", "Rose", "Lily-of-the-Valley"]
+    notes_base:
+      display_name: "Base Notes"
+      type: "list[string]"
+      required: false
+      example: ["Sandalwood", "Vetiver", "Vanilla"]
+    genre:
+      display_name: "Olfactory Genre"
+      type: "string"
+      required: false
+      example: "Floral Aldehyde"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+essay: # Essays are simpler, often just author and references
+  fields:
+    contributors: # Primarily 'author' role
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true 
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'author'" }
+        person: { type: "string", required: true, description: "Author's person page title." }
+      example: [{ role: "author", person: "Your Name" }]
+    description:
+      display_name: "Description"
+      type: "string"
+      required: false
+      description: "Brief summary of the essay for meta tags or lists."
+    related_works:
+      display_name: "Related Works"
+      type: "list[string]" # List of content paths
+      required: false
+      description: "Paths to other content items discussed (e.g., '/books/slug')."
+      example: ["/books/the-brothers-karamazov"]
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+
+# --- ADD DEFINITIONS FOR ALL OTHER WORK TYPES ---
+# (photograph, musical_composition, play, sculpture, print, 
+# graphic_novel, digital_art, architecture, installation, 
+# sound_art, ceramics, fashion_collection, exhibition)
+# Follow the pattern above, defining relevant IDs, contributors, 
+# and specific metadata fields for each type.
+
+# Example for architecture:
+architecture:
+  fields:
+    architecture_id:
+      display_name: "Architecture ID"
+      type: "string"
+      required: true
+      example: "bauhaus-dessau"
+    contributors: # Primarily 'architect'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'architect'" }
+        person: { type: "string", required: true, description: "Architect's person page title." }
+      example: [{ role: "architect", person: "Walter Gropius" }]
+    completion_date:
+      display_name: "Completion Date"
+      type: "string" # YYYY
+      required: false
+      example: "1926"
+    location_city:
+      display_name: "City"
+      type: "string"
+      required: false
+      example: "Dessau"
+    location_country:
+      display_name: "Country"
+      type: "string"
+      required: false
+      example: "Germany"
+    style:
+      display_name: "Architectural Style"
+      type: "string"
+      required: false
+      example: "Bauhaus"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+photograph:
+  fields:
+    photograph_id:
+      display_name: "Photograph ID"
+      type: "string"
+      required: true
+      description: "Unique identifier, used in image folder slug."
+      example: "ansel-adams-monolith"
+    contributors: # Primarily 'photographer'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'photographer'" }
+        person: { type: "string", required: true, description: "Photographer's person page title." }
+      example: [{ role: "photographer", person: "Ansel Adams" }]
+    capture_date:
+      display_name: "Capture Date"
+      type: "string" # YYYY or YYYY-MM-DD
+      required: false
+      example: "1927"
+    medium:
+      display_name: "Medium/Process"
+      type: "string"
+      required: false
+      description: "Photographic process used."
+      example: "Gelatin silver print"
+    dimensions:
+      display_name: "Dimensions"
+      type: "string"
+      required: false
+      example: "50 x 40 cm"
+    location: # Where the photo was taken, if relevant
+      display_name: "Subject Location"
+      type: "string"
+      required: false
+      example: "Yosemite National Park"
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Landscape Photography"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+musical_composition:
+  fields:
+    composition_id:
+      display_name: "Composition ID"
+      type: "string"
+      required: true
+      example: "beethoven-symphony-9"
+    contributors: # Composer primarily, but also Librettist, Arranger etc.
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (composer, librettist, arranger, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "composer", person: "Ludwig van Beethoven" }]
+    composition_date:
+      display_name: "Composition Date"
+      type: "string" # YYYY or range "YYYY-YYYY"
+      required: false
+      example: "1822–1824"
+    opus_number:
+      display_name: "Opus Number"
+      type: "string"
+      required: false
+      example: "Op. 125"
+    key:
+      display_name: "Key"
+      type: "string"
+      required: false
+      example: "D minor"
+    instrumentation:
+      display_name: "Instrumentation"
+      type: "string" # Could be list[string] for complex works
+      required: false
+      example: "Orchestra, Choir, Soloists"
+    period:
+      display_name: "Musical Period"
+      type: "string"
+      required: false
+      example: "Romantic"
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Symphony"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image: # e.g., score first page, famous recording cover
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+play:
+  fields:
+    play_id:
+      display_name: "Play ID"
+      type: "string"
+      required: true
+      example: "hamlet"
+    contributors: # Playwright primarily, maybe Director, Translator
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (playwright, director, translator, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "playwright", person: "William Shakespeare" }]
+    premiere_date:
+      display_name: "Premiere Date"
+      type: "string" # YYYY or approx.
+      required: false
+      example: "c. 1609"
+    setting_time:
+      display_name: "Setting (Time)"
+      type: "string"
+      required: false
+      example: "Late medieval period"
+    setting_place:
+      display_name: "Setting (Place)"
+      type: "string"
+      required: false
+      example: "Denmark"
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Tragedy"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image: # e.g., Famous production photo, poster
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+sculpture:
+  fields:
+    sculpture_id:
+      display_name: "Sculpture ID"
+      type: "string"
+      required: true
+      example: "michelangelo-david"
+    contributors: # Primarily 'sculptor'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'sculptor'" }
+        person: { type: "string", required: true, description: "Sculptor's person page title." }
+      example: [{ role: "sculptor", person: "Michelangelo" }]
+    creation_date:
+      display_name: "Creation Date"
+      type: "string" # YYYY or range "YYYY-YYYY"
+      required: false
+      example: "1501–1504"
+    medium:
+      display_name: "Medium"
+      type: "string"
+      required: false
+      example: "Marble"
+    dimensions:
+      display_name: "Dimensions"
+      type: "string"
+      required: false
+      example: "5.17 m (17.0 ft) height"
+    location:
+      display_name: "Current Location"
+      type: "string"
+      required: false
+      example: "Galleria dell'Accademia, Florence"
+    period:
+      display_name: "Art Period"
+      type: "string"
+      required: false
+      example: "High Renaissance"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+print:
+  fields:
+    print_id:
+      display_name: "Print ID"
+      type: "string"
+      required: true
+      example: "durer-melencolia-i"
+    contributors: # Primarily 'printmaker', maybe illustrator if based on drawing
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (printmaker, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "printmaker", person: "Albrecht Dürer" }]
+    creation_date:
+      display_name: "Creation Date"
+      type: "string" # YYYY
+      required: false
+      example: "1514"
+    medium: # Technique
+      display_name: "Medium/Technique"
+      type: "string"
+      required: false
+      example: "Engraving"
+    dimensions:
+      display_name: "Dimensions (Image)"
+      type: "string"
+      required: false
+      example: "24 cm × 18.8 cm"
+    edition: # If applicable
+      display_name: "Edition"
+      type: "string"
+      required: false
+      example: "State I/II"
+    collection: # Where a copy resides
+      display_name: "Collection Example"
+      type: "string"
+      required: false
+      example: "The Metropolitan Museum of Art"
+    period:
+      display_name: "Art Period"
+      type: "string"
+      required: false
+      example: "Northern Renaissance"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+graphic_novel:
+  fields:
+    graphic_novel_id:
+      display_name: "Graphic Novel ID"
+      type: "string"
+      required: true
+      example: "watchmen"
+    contributors: # Author, Illustrator, Letterer, Colorist etc.
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (author, illustrator, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "author", person: "Alan Moore" }, { role: "illustrator", person: "Dave Gibbons" }]
+    published_date:
+      display_name: "Published Date"
+      type: "string" # YYYY or YYYY-YYYY if serialized
+      required: false
+      example: "1986–1987"
+    publisher:
+      display_name: "Publisher"
+      type: "string"
+      required: false
+      example: "DC Comics"
+    page_count:
+      display_name: "Page Count"
+      type: "integer"
+      required: false
+      example: 416 # Example for collected edition
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Superhero"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+digital_art:
+  fields:
+    digital_art_id:
+      display_name: "Digital Art ID"
+      type: "string"
+      required: true
+      example: "everydays-first-5000-days"
+    contributors: # Primarily 'digital_artist', maybe 'programmer'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (digital_artist, programmer, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "digital_artist", person: "Beeple" }]
+    creation_date:
+      display_name: "Creation Date"
+      type: "string" # YYYY or range
+      required: false
+      example: "2007–2021"
+    medium:
+      display_name: "Medium/Format"
+      type: "string"
+      required: false
+      example: "JPEG collage, NFT"
+    software_used:
+      display_name: "Software Used"
+      type: "string" # Or list[string]
+      required: false
+      example: "Cinema 4D, Adobe Photoshop"
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Digital Collage"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image: # Often a representation or screenshot
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+installation:
+  fields:
+    installation_id:
+      display_name: "Installation ID"
+      type: "string"
+      required: true
+      example: "turrell-roden-crater"
+    contributors: # 'installation_artist', maybe sound_artist, programmer etc.
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (installation_artist, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "installation_artist", person: "James Turrell" }]
+    creation_date:
+      display_name: "Creation Date/Period"
+      type: "string" # Often ongoing or has a range
+      required: false
+      example: "1977–present"
+    medium:
+      display_name: "Medium/Materials"
+      type: "string" # Often complex, describe briefly
+      required: false
+      example: "Extinct volcano, earthwork, natural light"
+    location:
+      display_name: "Location"
+      type: "string"
+      required: false
+      example: "Painted Desert, Arizona"
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Land Art"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image: # Photo documentation is key
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+sound_art:
+  fields:
+    sound_art_id:
+      display_name: "Sound Art ID"
+      type: "string"
+      required: true
+      example: "cage-433" # Conceptual example
+    contributors: # 'sound_artist', 'composer', 'performer', 'engineer'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (sound_artist, composer, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "composer", person: "John Cage" }]
+    creation_date:
+      display_name: "Creation Date"
+      type: "string" # YYYY
+      required: false
+      example: "1952"
+    medium:
+      display_name: "Medium/Format"
+      type: "string"
+      required: false
+      example: "Conceptual (any instrument), Environmental sound"
+    duration:
+      display_name: "Duration"
+      type: "string"
+      required: false
+      example: "4 minutes 33 seconds"
+    genre:
+      display_name: "Genre"
+      type: "string"
+      required: false
+      example: "Conceptual Art"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image: # Often abstract or related to concept/score
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+ceramics:
+  fields:
+    ceramics_id:
+      display_name: "Ceramics ID"
+      type: "string"
+      required: true
+      example: "rie-bowl-1980"
+    contributors: # Primarily 'ceramist'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'ceramist'" }
+        person: { type: "string", required: true, description: "Ceramist's person page title." }
+      example: [{ role: "ceramist", person: "Lucie Rie" }]
+    creation_date:
+      display_name: "Creation Date"
+      type: "string" # YYYY or approx.
+      required: false
+      example: "c. 1980"
+    medium:
+      display_name: "Medium/Materials"
+      type: "string"
+      required: false
+      example: "Stoneware, porcelain slip, glaze"
+    dimensions:
+      display_name: "Dimensions"
+      type: "string"
+      required: false
+      example: "Height 10cm, Diameter 15cm"
+    technique:
+      display_name: "Technique"
+      type: "string"
+      required: false
+      example: "Wheel-thrown"
+    collection:
+      display_name: "Collection Example"
+      type: "string"
+      required: false
+      example: "Victoria and Albert Museum"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image:
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+fashion_collection:
+  fields:
+    collection_id:
+      display_name: "Collection ID"
+      type: "string"
+      required: true
+      example: "mcqueen-ss-1999"
+    contributors: # Primarily 'fashion_designer'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key, likely 'fashion_designer'" }
+        person: { type: "string", required: true, description: "Designer's person page title." }
+      example: [{ role: "fashion_designer", person: "Alexander McQueen" }]
+    season_year:
+      display_name: "Season/Year"
+      type: "string"
+      required: false
+      description: "e.g., Spring/Summer 1999, FW24"
+      example: "Spring/Summer 1999"
+    show_name: # If collection had a specific title
+      display_name: "Show/Collection Name"
+      type: "string"
+      required: false
+      example: "No. 13"
+    location: # Show location
+      display_name: "Presentation Location"
+      type: "string"
+      required: false
+      example: "London"
+    themes:
+      display_name: "Themes/Concepts"
+      type: "string" # Or list[string]
+      required: false
+      example: "Technology, nature, craftsmanship"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image: # Key runway look or campaign image
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
+
+exhibition:
+  fields:
+    exhibition_id:
+      display_name: "Exhibition ID"
+      type: "string"
+      required: true
+      example: "documenta-14"
+    contributors: # Primarily 'curator', maybe 'art_director'
+      display_name: "Contributors"
+      type: "list[map]"
+      required: true
+      map_structure:
+        role: { type: "string", required: true, description: "Role key (curator, etc.)" }
+        person: { type: "string", required: true, description: "Contributor's person page title." }
+      example: [{ role: "curator", person: "Adam Szymczyk" }] # Artistic Director role might fit curator
+    exhibition_date_start:
+      display_name: "Start Date"
+      type: "string" # YYYY-MM-DD or YYYY
+      required: false
+      example: "2017-04-08" # Athens opening
+    exhibition_date_end:
+      display_name: "End Date"
+      type: "string" # YYYY-MM-DD or YYYY
+      required: false
+      example: "2017-09-17" # Kassel closing
+    venue:
+      display_name: "Venue(s)"
+      type: "string" # Or list[string]
+      required: false
+      example: "Various locations in Athens, Greece and Kassel, Germany"
+    theme:
+      display_name: "Exhibition Theme"
+      type: "string"
+      required: false
+      example: "Learning from Athens"
+    tags:
+      display_name: "Tags"
+      type: "list[string]"
+      required: false
+    categories:
+      display_name: "Categories"
+      type: "list[string]"
+      required: false
+    featured_image: # Poster or iconic installation view
+      display_name: "Featured Image Override"
+      type: "string"
+      required: false
