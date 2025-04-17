@@ -3,8 +3,8 @@ type: "book"
 title: "The Brothers Karamazov"
 draft: false
 contributors:
-  - role: "author" # Use the key from data/contribution_roles.yaml
-    person: "Fyodor Dostoevsky" # Use the exact title of the person's page
+  - role: "author" # Key from data/contribution_roles.yaml
+    person: "Fyodor Dostoyevsky"
 date: 2023-01-15
 book_id: "b634230"
 published_date: "1880"

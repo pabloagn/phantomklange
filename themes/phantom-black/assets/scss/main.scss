@@ -1,0 +1,32 @@
+// assets/scss/main.scss
+
+// 1. Settings/Utils (Variables, Mixins - if any)
+@import 'utils/variables'; // Or @use 'utils/variables' as *;
+
+// 2. Generic (Reset, Box-sizing)
+@import 'base/reset'; // If you use one
+@import 'base/base';
+
+// 3. Elements (Base HTML tags)
+@import 'base/typography';
+
+// 4. Objects (Layout patterns)
+@import 'layout/container';
+@import 'layout/grid';
+@import 'layout/structure';
+
+// 5. Components (UI pieces)
+@import 'components/header';
+@import 'components/navigation';
+@import 'components/footer';
+@import 'components/card'; // Covers book-card, archive-grid-item etc.
+@import 'components/metadata';
+// ... import other components
+
+// 6. Pages (Page-specific overrides - use sparingly)
+@import 'pages/home';
+@import 'pages/book-single';
+@import 'pages/person-single';
+
+// 7. Utilities (Helper classes - last)
+@import 'utils/helpers'; // If you have them

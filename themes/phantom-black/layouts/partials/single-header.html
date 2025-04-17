@@ -2,22 +2,11 @@
 {{/* layouts/partials/single-header.html                        */}}
 {{/*                                                            */}}
 {{/* Displays the header for single work/person pages.          */}}
-{{/* Includes nil checks, refined image paths, contributor logic */}}
+{{/* Fixed contributor linking logic.                           */}}
 {{/* ============================================================ */}}
 {{ $page := .page }}
 {{ $layoutType := .layoutType | default "unknown" }}
-{{ $context := .context }} {{/* This is the '$' from the calling template */}}
-
-{{/* --- DEBUG: Log entry point --- */}}
-{{ $currentPagePath := "[Page Object Missing]" }}
-{{ $currentPageKind := "[Page Object Missing]" }}
-{{ with .page }}
-    {{ $currentPagePath = .File.Path | default .Path | default .RelPermalink }}
-    {{ $currentPageKind = .Kind }}
-{{ end }}
-{{/* {{ warnf "DEBUG: Processing single-header.html for Page: %s (Kind: %s) | Layout Type: %s | Context ($) valid: %t" $currentPagePath $currentPageKind $layoutType (ne $context nil) }} */}}
-{{/* --- END DEBUG --- */}}
-
+{{ $context := .context }} {{/* This is the '$' from the calling template - kept for potential other uses */}}
 
 {{/* --- GUARD: Only proceed if we have a valid page object --- */}}
 {{ if $page }}
@@ -48,7 +37,6 @@
     {{ if eq $workType "exhibition" }}{{ $idParam = "exhibition_id" }}{{ $imageDir = "exhibitions" }}{{ end }}
     {{ if eq $workType "person" }}{{ $idParam = "person_id" }}{{ $imageDir = "people" }}{{ end }}
 
-
     {{ $itemId := "" }}
     {{ $contributors := slice }} {{/* Initialize contributors slice */}}
     {{ $pageParams := dict }} {{/* Initialize as empty map */}}
@@ -77,27 +65,17 @@
         {{ $coverPath = printf "/images/%s/%s/cover.jpg" $imageDir $folderName }}
         {{ $posterPath = printf "/images/%s/%s/poster.jpg" $imageDir $folderName }}
         {{ $hasImages = true }}
-        {{/* --- DEBUG --- */}}
-        {{/* {{ warnf "DEBUG single-header: Found images for %s. Poster: %s | Cover: %s" $title $posterPath $coverPath }} */}}
-        {{/* --- END DEBUG --- */}}
-     {{ else }}
-         {{/* --- DEBUG --- */}}
-         {{/* {{ warnf "DEBUG single-header: Could not determine image paths for %s (Type: %s, ID: %s, Slug: %s, Folder: %s)" $title $workType $itemId $fallbackTitleSlug $folderName }} */}}
-         {{/* --- END DEBUG --- */}}
-    {{ end }}
+     {{ end }}
 
     {{/* --- Logic for Subtitle --- */}}
     {{ $subtitle := "" }}
     {{ $primaryContributors := slice }}
     {{ if eq $layoutType "work" }}
-        {{/* Use the $contributors variable we safely initialized */}}
         {{ range $contributors }}
             {{ if partial "is-primary-role.html" .role }}
                  {{ $primaryContributors = $primaryContributors | append .person }}
             {{ end }}
         {{ end }}
-        {{/* Subtitle logic based on primary contributors */}}
-        {{/* (We will display them below, no need to build $subtitle string here) */}}
     {{ else if eq $layoutType "person" }}
       {{ with $page.Params.description }}{{ $subtitle = . }}{{ end }}
     {{ end }}
@@ -120,11 +98,22 @@
                         {{ if $primaryContributors }}
                             <p class="book-metadata-author">
                                 {{ range $index, $personName := $primaryContributors }}
-                                    {{ $personPage := "" }}
-                                    {{/* Ensure context and Site are valid before GetPage */}}
-                                    {{ if and $context $.Site }}
-                                        {{ $personPage = $.Site.GetPage (printf "/people/%s" ($personName | urlize)) }}
+                                    {{/* --- FIXED PERSON PAGE RETRIEVAL --- */}}
+                                    {{ $personSlug := $personName | urlize }}
+                                    {{ $personPage := site.GetPage (printf "person/%s" $personSlug) }}
+                                    
+                                    {{/* Try alternative paths if first attempt failed */}}
+                                    {{ if not $personPage }}
+                                        {{ $personPage = site.GetPage (printf "people/%s" $personSlug) }}
                                     {{ end }}
+                                    
+                                    {{/* Debug statement - optional */}}
+                                    {{ if not $personPage }}
+                                        {{ warnf "DEBUG: Could not find person page for '%s', slug: '%s'" $personName $personSlug }}
+                                    {{ end }}
+                                    {{/* --- END FIXES --- */}}
+                                    
+                                    {{/* Creates link if page found, otherwise just name */}}
                                     {{ if $personPage }}<a href="{{ $personPage.RelPermalink }}">{{ $personName }}</a>{{ else }}{{ $personName }}{{ end }}
                                     {{ if lt $index (sub (len $primaryContributors) 1) }}, {{ end }}
                                 {{ end }}
@@ -132,7 +121,7 @@
                         {{ end }}
                         {{/* Pass contributors list (if it exists) to metadata display */}}
                         {{ if $contributors }}
-                            {{ partial "metadata-display.html" (dict "page" $page "context" $context "contributors" $contributors) }}
+                            {{ partial "metadata-display.html" (dict "page" $page "context" $context "contributors" $contributors) }} {{/* Pass original $context ($) */}}
                         {{ end }}
                     </div>
                 </div>
@@ -151,9 +140,9 @@
                              <p class="person-description">{{ . }}</p>
                          {{ end }}
                          <div class="person-meta-details">
-                             {{ with $page.Params.birth_date }}<span class="meta-item">Born: {{ . }}</span>{{ end }}
-                             {{ with $page.Params.death_date }}{{ if ne . "present" }}<span class="meta-item">Died: {{ . }}</span>{{ else }}<span class="meta-item">Living</span>{{ end }}{{ end }}
-                             {{ with $page.Params.nationality }}<span class="meta-item">Nationality: {{ . }}</span>{{ end }}
+                             {{ with $pageParams.birth_date }}<span class="meta-item">Born: {{ . }}</span>{{ end }}
+                             {{ with $pageParams.death_date }}{{ if ne . "present" }}<span class="meta-item">Died: {{ . }}</span>{{ else }}<span class="meta-item">Living</span>{{ end }}{{ end }}
+                             {{ with $pageParams.nationality }}<span class="meta-item">Nationality: {{ . }}</span>{{ end }}
                              {{/* Add other person meta if needed */}}
                          </div>
                      </div>

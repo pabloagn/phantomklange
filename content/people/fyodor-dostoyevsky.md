@@ -1,9 +1,9 @@
 ---
-title: "Fyodor Dostoevsky"
+title: "Fyodor Dostoyevsky"
 date: 2025-04-17
 draft: false
 type: "person"
-person_id: "fyodor-dostoevsky" 
+person_id: "fyodor-dostoyevsky"
 description: "Renowned Russian novelist, philosopher, and essayist known for his deep psychological portraits and exploration of the human condition."
 birth_date: "1821-11-11"
 death_date: "1881-02-09"

@@ -1,25 +1,33 @@
 {{/* ============================================================ */}}
 {{/* layouts/partials/get-role-display.html                     */}}
+{{/*                                                            */}}
 {{/* Gets the display name for a contribution role key.         */}}
 {{/* Input (.): Role key (string, e.g., "author")               */}}
 {{/* ============================================================ */}}
 {{ $roleKey := . }}
-{{ $display := "" }} {{/* Initialize display name */}}
+{{ $display := "[Invalid Role Key]" }} {{/* Default error display */}}
+{{ $keyType := printf "%T" $roleKey }} {{/* Get the type of the input */}}
 
-{{/* Ensure roleKey is a string and not empty */}}
-{{ if and (ne $roleKey nil) (reflect.IsKind $roleKey "string") (ne $roleKey "") }}
-    {{/* Try to find the role data */}}
+{{/* --- Check if input is specifically a non-empty string FIRST --- */}}
+{{ if and (eq $keyType "string") (ne $roleKey "") }}
+    {{/* Key is a valid, non-empty string. Proceed with lookup. */}}
+    {{ $display = $roleKey }} {{/* Default to the key itself */}}
+
+    {{/* Safely lookup the role data */}}
     {{ with index site.Data.contribution_roles $roleKey }}
-        {{/* Role key found in data file, get its display name or use key */}}
+        {{/* Role data found, use display name or fallback to key */}}
         {{ $display = .display | default $roleKey }}
     {{ else }}
-        {{/* Role key NOT found in data file, humanize the key as fallback */}}
+        {{/* Role key not in data file, humanize the key */}}
         {{ $display = humanize $roleKey }}
+        {{/* Optional: Log warning if key not found */}}
+        {{ if not hugo.IsServer }}{{ warnf "Role key '%s' not found in data/contribution_roles.yaml, using humanized fallback." $roleKey }}{{ end }}
     {{ end }}
 {{ else }}
-     {{/* Input was invalid (nil, not string, or empty) */}}
-     {{ warnf "Invalid role key '%v' passed to get-role-display.html" $roleKey }}
-     {{ $display = "[Invalid Role]" }} {{/* Indicate an error */}}
+    {{/* Input was nil, not a string, or an empty string */}}
+    {{ warnf "Invalid or empty role key (Type: %s, Value: '%v') passed to get-role-display.html" $keyType $roleKey }}
+    {{/* $display remains "[Invalid Role Key]" */}}
 {{ end }}
+{{/* --- End Check --- */}}
 
 {{ return $display }}
