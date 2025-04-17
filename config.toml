@@ -18,6 +18,7 @@ theme = "phantom-black"
 [params]
   description = "Explorations in literature, film, and philosophy"
   math = true
+  dateFormat = "January 2, 2006"
 
 # Menu structure
 [menu]

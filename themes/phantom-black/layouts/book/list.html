@@ -16,7 +16,7 @@
                 
                 {{ if .Params.featured_image }}
                 <img src="{{ .Params.featured_image }}" alt="{{ .Title }}" class="book-cover">
-                {{ else if $bookId }}
+                {{ else if .Params.book_id }}
                 <img src="{{ $posterPath }}" alt="{{ .Title }}" class="book-cover">
                 {{ else }}
                 <div class="book-cover-placeholder"></div>

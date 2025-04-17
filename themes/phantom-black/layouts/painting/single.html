@@ -1,0 +1,16 @@
+{{ define "main" }}
+<article class="painting-single"> {{/* New class */}}
+    {{ partial "single-header.html" (dict "page" . "layoutType" "work" "context" $) }}
+    <div class="container">
+        <div class="book-content-container">
+            <div class="book-content">
+                {{ .Content }}
+            </div>
+             {{ if or .Params.categories .Params.tags }}
+                {{ partial "taxonomy-display.html" . }} 
+            {{ end }}
+        </div>
+    </div>
+    {{ partial "related-content.html" . }}
+</article>
+{{ end }}

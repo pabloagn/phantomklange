@@ -1,0 +1,17 @@
+{{/* 
+Partial: Archive Hero Section
+Context (.): The List Page object
+*/}}
+<div class="archive-hero">
+    <div class="container">
+        <h1 class="archive-title">{{ .Title }}</h1>
+        {{ with .Description }}
+            <p class="archive-description">{{ . }}</p>
+        {{ end }}
+        {{ with .Content }}
+            <div class="archive-content">
+                {{ . }}
+            </div>
+        {{ end }}
+    </div>
+</div>

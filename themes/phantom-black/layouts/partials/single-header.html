@@ -1,0 +1,119 @@
+{{/*
+Partial: Single Page Header
+Displays the header section for single content pages (book, person, etc.)
+
+Context (.): The Single Page object
+Params:
+    - layoutType (string): "work", "person"
+*/}}
+{{ $page := .page }} {{/* Correct context passing */}}
+{{ $layoutType := .layoutType }} {{/* Correct context passing */}}
+{{ $context := .context }} {{/* Pass the top-level context $ */}}
+
+{{ $idParam := "" }}      {{/* Initialize idParam as empty string */}}
+{{ $imageDir := "" }}
+{{ $subtitle := "" }}
+{{ $title := $page.Title }}
+{{ $fallbackTitleSlug := $page.Title | urlize }}
+
+{{/* Determine IDs, paths, and subtitles based on page type */}}
+{{ if eq $page.Type "book" }}
+    {{ $idParam = "book_id" }}
+    {{ $imageDir = "books" }}
+    {{ $subtitle = $page.Params.author }}
+{{ else if eq $page.Type "person" }}
+    {{ $idParam = "person_id" }}
+    {{ $imageDir = "people" }}
+    {{ $subtitle = $page.Params.description }}
+{{ else if eq $page.Type "painting" }}
+    {{ $idParam = "painting_id" }}
+    {{ $imageDir = "paintings" }}
+    {{ $subtitle = $page.Params.artist }}
+{{ else if eq $page.Type "scent" }}
+    {{ $idParam = "scent_id" }}
+    {{ $imageDir = "scents" }}
+    {{ $subtitle = $page.Params.house }}
+{{ end }}
+{{/* Add film later */}}
+
+
+{{ $itemId := "" }}
+{{ if ne $idParam "" }} {{/* Only try to get itemId if idParam was set */}}
+    {{/* CORRECTED: Use index MAP KEY syntax */}}
+    {{ $itemId = index $page.Params $idParam }} 
+{{ end }}
+
+{{ $folderName := "" }}
+{{ if ne $itemId "" }}
+    {{ $folderName = printf "%s-%s" $itemId $fallbackTitleSlug }}
+{{ else if ne $imageDir "" }} {{/* Fallback */}}
+     {{ $folderName = $fallbackTitleSlug }}
+{{ end }}
+
+{{ $coverPath := "" }}
+{{ $posterPath := "" }}
+{{ $hasImages := false }}
+{{ if and (ne $imageDir "") (ne $folderName "") }}
+    {{ $coverPath = printf "/images/%s/%s/cover.jpg" $imageDir $folderName }}
+    {{ $posterPath = printf "/images/%s/%s/poster.jpg" $imageDir $folderName }}
+    {{ $hasImages = true }} {{/* Assume images might exist if dir and folder name are valid */}}
+{{ end }}
+
+
+<div class="header-image" {{ if $hasImages }} style="background-image: url('{{ $coverPath | relURL }}')" {{ else }} style="background-color: var(--bg-secondary); height: 250px;" {{ end }}>
+    {{ if $hasImages }}<div class="header-overlay"></div>{{ end }}
+
+    {{ if eq $layoutType "work" }}
+        {{/* --- WORK LAYOUT (Book, Painting, Scent, Film) --- */}}
+        <div class="book-details-container">
+            <div class="book-details-inner">
+                {{ if $hasImages }}
+                <div class="book-poster-container">
+                    <img src="{{ $posterPath | relURL }}" alt="{{ $title }} poster" class="book-poster"
+                         onerror="this.style.display='none'; this.parentElement.style.display='none';">
+                </div>
+                {{ end }}
+                <div class="book-metadata">
+                    <h1 class="book-metadata-title">{{ $title }}</h1>
+                    {{ with $subtitle }}
+                        <p class="book-metadata-author">
+                            {{ $personSlug := . | urlize }}
+                            {{ $personPage := $context.Site.GetPage (printf "/people/%s" $personSlug) }}
+                            {{ if and $personPage (ne $page.Type "scent") }}
+                                by <a href="{{ $personPage.RelPermalink }}">{{ . }}</a>
+                            {{ else if eq $page.Type "scent" }}
+                                by {{ . }}
+                            {{ else }}
+                                by {{ . }}
+                            {{ end }}
+                        </p>
+                    {{ end }}
+                    {{ partial "metadata-display.html" (dict "page" $page "context" $context) }}
+                </div>
+            </div>
+        </div>
+    {{ else if eq $layoutType "person" }}
+        {{/* --- PERSON LAYOUT --- */}}
+        <div class="person-details-container">
+             <div class="person-details-inner">
+                {{ if $hasImages }}
+                <div class="person-avatar-container">
+                    <img src="{{ $posterPath | relURL }}" alt="{{ $title }} portrait" class="person-avatar"
+                         onerror="this.style.display='none';">
+                </div>
+                {{ end }}
+                <div class="person-metadata">
+                    <h1 class="person-name">{{ $title }}</h1>
+                    {{ with $subtitle }}
+                        <p class="person-description">{{ . }}</p>
+                    {{ end }}
+                    <div class="person-meta-details">
+                        {{ with $page.Params.birth_date }}<span class="meta-item">Born: {{ . }}</span>{{ end }}
+                        {{ with $page.Params.death_date }}{{ if ne . "present" }}<span class="meta-item">Died: {{ . }}</span>{{ else }}<span class="meta-item">Living</span>{{ end }}{{ end }}
+                        {{ with $page.Params.nationality }}<span class="meta-item">Nationality: {{ . }}</span>{{ end }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{ end }}
+</div>

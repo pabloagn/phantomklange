@@ -84,15 +84,13 @@
                 <div class="book-card-inner">
                     <a href="{{ .RelPermalink }}" class="book-link">
                         <div class="book-cover">
-                            {{/* Properly handle image paths based on your structure */}}
                             {{ $folderName := "" }}
-                            {{ with .Params.book_id }}
-                                {{ $folderName = printf "%s-%s" . ($.Title | urlize) }}
-                            {{ else }}
-                                {{ $folderName = $.Title | urlize }}
+                            {{ $posterPath := "" }} {{/* Initialize poster path */}}
+                            {{ if .Params.book_id }} {{/* Only proceed if book_id exists */}}
+                                {{/* CORRECTED: Use .Title (current page title) */}}
+                                {{ $folderName = printf "%s-%s" .Params.book_id (.Title | urlize) }} 
+                                {{ $posterPath = printf "/images/books/%s/poster.jpg" $folderName }}
                             {{ end }}
-                            
-                            {{ $posterPath := printf "/images/books/%s/poster.jpg" $folderName }}
                             
                             <div style="display:none;" class="debug-info">
                                 {{ $posterPath }}

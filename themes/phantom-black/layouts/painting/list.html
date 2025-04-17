@@ -1,0 +1,12 @@
+{{ define "main" }}
+{{ partial "archive-hero.html" . }}
+<div class="container">
+    <div class="books-grid" id="paintings-container"> 
+        {{ $paginator := .Paginate .Pages }}
+        {{ range $paginator.Pages }}
+            {{ partial "archive-grid-item.html" (dict "page" . "sectionType" "paintings" "site" $.Site) }}
+        {{ end }}
+    </div>
+    {{ partial "pagination.html" . }} 
+</div>
+{{ end }}

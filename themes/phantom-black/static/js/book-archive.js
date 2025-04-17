@@ -178,12 +178,12 @@ document.addEventListener('DOMContentLoaded', function() {
     sortBooks();
     
     // Add loading transitions for book covers
-    bookCards.forEach(card => {
-        const coverImg = card.querySelector('.book-cover img');
-        if (coverImg) {
-            coverImg.addEventListener('load', () => {
-                coverImg.parentElement.classList.add('loaded');
-            });
-        }
-    });
+    // bookCards.forEach(card => {
+    //     const coverImg = card.querySelector('.book-cover img');
+    //     if (coverImg) {
+    //         coverImg.addEventListener('load', () => {
+    //             coverImg.parentElement.classList.add('loaded');
+    //         });
+    //     }
+    // });
 });

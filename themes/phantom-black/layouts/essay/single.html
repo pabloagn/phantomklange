@@ -1,0 +1,18 @@
+{{ define "main" }}
+<article class="essay-single container"> {{/* Simple container */}}
+    <header class="essay-header">
+        <h1>{{ .Title }}</h1>
+        <div class="essay-meta">
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format $.Site.Params.dateFormat | default "Jan 2, 2006" }}</time>
+            {{ with .Params.categories }} | Categories: {{ range . }}<a href="{{ "/categories/" | relURL }}{{ . | urlize }}">{{ . }}</a> {{ end }}{{ end }}
+             {{ with .Params.tags }} | Tags: {{ range . }}<a href="{{ "/tags/" | relURL }}{{ . | urlize }}">{{ . }}</a> {{ end }}{{ end }}
+        </div>
+    </header>
+    <div class="book-content"> {{/* Reuse content styling */}}
+        {{ .Content }}
+    </div>
+
+    {{ partial "related-content.html" . }} {{/* Shows mentioned works */}}
+
+</article>
+{{ end }}

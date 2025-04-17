@@ -1,0 +1,22 @@
+{{ define "main" }}
+<article class="person-single"> {{/* New class */}}
+    {{ partial "single-header.html" (dict "page" . "layoutType" "person" "context" $) }}
+
+    <div class="container">
+        <div class="book-content-container"> {{/* Reuse class for now */}}
+            {{/* Main content - Biography etc. */}}
+            <div class="book-content"> {{/* Reuse class */}}
+                {{ .Content }}
+            </div>
+
+            {{/* Taxonomy if used */}}
+            {{ if or .Params.categories .Params.tags }}
+                {{ partial "taxonomy-display.html" . }} {{/* Create this if needed */}}
+            {{ end }}
+        </div>
+    </div>
+
+    {{/* Related Works Section */}}
+    {{ partial "related-content.html" . }}
+</article>
+{{ end }}
