@@ -1,0 +1,499 @@
+// assets/scss/pages/_book-archive.scss
+
+// Book Archive Page Styling
+.book-archive {
+  background-color: var(--bg-primary);
+}
+
+// Archive Hero Section with refined typography
+.archive-hero {
+  padding: 5rem 0 3.5rem;
+  background-color: var(--bg-zero);
+  position: relative;
+  
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+  }
+  
+  .container {
+    max-width: var(--width-wide);
+  }
+}
+
+.archive-title {
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  font-weight: 400;
+  margin: 0 0 1rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-primary);
+  
+  @media (max-width: 768px) {
+    font-size: 3rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 2.5rem;
+  }
+}
+
+.archive-description {
+  font-family: var(--font-body);
+  font-size: 1.4rem;
+  font-style: italic;
+  color: var(--fg-secondary);
+  max-width: 760px;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+}
+
+.archive-content {
+  max-width: 760px;
+  margin-top: 2rem;
+  color: var(--fg-secondary);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  
+  p:first-of-type {
+    font-size: 1.2rem;
+  }
+}
+
+// Archive Controls - Refined and elegant
+.archive-controls {
+  background-color: var(--bg-zero);
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: var(--header-height);
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.search-filter-container {
+  max-width: var(--width-wide);
+  margin: 0 auto;
+  /* padding: 0 2rem; */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-end;
+  
+  @media (max-width: 992px) {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+}
+
+// Elegant search input
+.archive-search {
+  position: relative;
+  flex: 1 1 300px;
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    padding-right: 3rem;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--fg-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    
+    &::placeholder {
+      color: var(--fg-secondary);
+      opacity: 0.7;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+  }
+  
+  button {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 0;
+    transition: color 0.3s ease;
+    
+    &:hover,
+    &:focus {
+      color: var(--accent-light);
+      outline: none;
+    }
+  }
+}
+
+// Filter controls with sophisticated styling
+.archive-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  flex: 1 1 auto;
+  
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+}
+
+.filter-group {
+  flex: 1 1 200px;
+  
+  @media (max-width: 768px) {
+    flex: 1 1 100%;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--fg-secondary);
+    letter-spacing: 0.05em;
+  }
+  
+  select {
+    width: 100%;
+    padding: 1rem 2.5rem 1rem 1.25rem;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--fg-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(138, 123, 158)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    cursor: pointer;
+    
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+  }
+}
+
+// Results information area
+.archive-results-info {
+  max-width: var(--width-wide);
+  margin: 2rem auto 1rem;
+  padding: 0 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+#results-count {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--fg-secondary);
+  margin: 0;
+  font-style: italic;
+}
+
+// Active filters with refined appearance
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.active-filter {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  background-color: rgba(98, 87, 114, 0.1);
+  border: 1px solid rgba(98, 87, 114, 0.25);
+  color: var(--fg-secondary);
+  font-size: 0.9rem;
+  font-family: var(--font-ui);
+  
+  button {
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0 0 0 0.5rem;
+    margin-left: 0.25rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    
+    &:hover,
+    &:focus {
+      color: var(--accent);
+      opacity: 1;
+      outline: none;
+    }
+  }
+}
+
+// Main content container
+.archive-container {
+  max-width: var(--width-wide);
+  padding: 0 2rem;
+  margin: 3rem auto 5rem;
+}
+
+// Refined Book Grid
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // Exactly 3 books per row
+  gap: 3rem; // Increased gap for better spacing
+  margin-bottom: 4rem;
+  
+  // Maintain 3 per row on large screens
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  // Adjust for medium screens
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+  
+  // Single column for mobile
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+// No results message
+.no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  margin: 2rem 0 4rem;
+  
+  h3 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin: 0 0 1rem;
+    color: var(--fg-primary);
+  }
+  
+  p {
+    color: var(--fg-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.reset-button {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background-color: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent-light);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  letter-spacing: 0.05em;
+  
+  &:hover,
+  &:focus {
+    background-color: var(--accent);
+    color: var(--fg-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    outline: none;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Enhanced Pagination styling
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 4rem;
+  
+  .page-item {
+    list-style: none;
+    
+    a, span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      color: var(--fg-secondary);
+      border: 1px solid var(--border);
+      font-family: var(--font-ui);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      
+      &:hover:not(.disabled) {
+        border-color: var(--accent);
+        color: var(--accent-light);
+      }
+    }
+    
+    &.active a {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: var(--fg-primary);
+    }
+    
+    &.disabled span {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Refined book card styling
+.archive-grid-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  height: 100%;
+  max-width: 100%;
+  
+  &:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    
+    .archive-item-cover img {
+      transform: scale(1.05);
+      filter: grayscale(0%);
+    }
+    
+    .archive-item-title a {
+      color: var(--accent-light);
+    }
+  }
+}
+
+.archive-grid-item-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.archive-item-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.archive-item-cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    filter: grayscale(10%);
+  }
+  
+  &.cover-placeholder {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--accent) 100%);
+    opacity: 0.6;
+  }
+}
+
+.archive-item-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: var(--bg-zero);
+  border-top: 1px solid var(--border);
+}
+
+.archive-item-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  line-height: 1.3;
+  margin: 0 0 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  
+  a {
+    color: var(--fg-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: var(--accent-light);
+    }
+  }
+}
+
+.archive-item-subtitle {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--fg-secondary);
+  margin: 0 0 1.25rem;
+  line-height: 1.4;
+}
+
+.archive-item-meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+}
+
+.book-rating {
+  color: var(--fg-secondary);
+  font-size: 1rem;
+  
+  .star {
+    opacity: 0.5;
+    
+    &.filled {
+      color: var(--accent-light);
+      opacity: 1;
+    }
+  }
+}
