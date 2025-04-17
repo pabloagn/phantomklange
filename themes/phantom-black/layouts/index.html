@@ -1,36 +1,150 @@
 {{ define "main" }}
-<div class="container">
-    <div class="home-intro">
-        <h1>{{ .Site.Title }}</h1>
-        {{ with .Site.Params.description }}
-        <p class="site-description">{{ . }}</p>
-        {{ end }}
+<div class="hero-banner">
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="home-intro">
+            <h1 class="site-title">{{ .Site.Title }}</h1>
+            {{ with .Site.Params.description }}
+            <p class="site-description">{{ . }}</p>
+            {{ end }}
+            <div class="separator"><span></span></div>
+        </div>
     </div>
-    
+</div>
+
+<div class="container">
     {{ with .Content }}
     <div class="home-content">
         {{ . }}
     </div>
     {{ end }}
-    
-    <!-- Only show this section if books exist -->
+   
+    <!-- Books Section with Grid -->
     {{ $books := where .Site.RegularPages "Section" "books" }}
     {{ if gt (len $books) 0 }}
     <section class="home-section">
-        <h2>Recent Books</h2>
-        <div class="preview-grid">
-            {{ range first 3 $books }}
-            <article class="preview-card">
-                <h3>
-                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-                </h3>
-                {{ with .Params.author }}
-                <p class="item-author">{{ . }}</p>
-                {{ end }}
+        <h2 class="section-title">Recent Additions</h2>
+        <div class="home-grid">
+            {{ range first 6 $books }}
+            <article class="archive-grid-item">
+                <a href="{{ .RelPermalink }}" class="archive-item-link">
+                    <div class="archive-item-cover">
+                        {{ $titleSlug := .Title | urlize }}
+                        {{ $bookId := .Params.book_id | default "" }}
+                        {{ $folderName := "" }}
+                        {{ if and $bookId (ne $bookId "") }}
+                            {{ $folderName = printf "%s-%s" $bookId $titleSlug }}
+                        {{ else }}
+                            {{ $folderName = $titleSlug }}
+                        {{ end }}
+                        {{ $posterPath := printf "/images/books/%s/poster.jpg" $folderName }}
+                        <img src="{{ $posterPath | relURL }}" alt="{{ .Title }}" onerror="this.parentElement.classList.add('cover-placeholder'); this.style.display='none';">
+                    </div>
+                    <div class="archive-item-info">
+                        <h3 class="archive-item-title">{{ .Title }}</h3>
+                        {{ with .Params.contributors }}
+                            {{ range . }}
+                                {{ if eq .role "author" }}
+                                <p class="archive-item-subtitle">{{ .person }}</p>
+                                {{ end }}
+                            {{ end }}
+                        {{ end }}
+                        <div class="archive-item-meta">
+                            {{ with .Params.published_date }}
+                            <span>{{ . }}</span>
+                            {{ end }}
+                        </div>
+                    </div>
+                </a>
+            </article>
+            {{ end }}
+        </div>
+        <div class="view-all-container">
+            <a href="/books/" class="view-all-link">View All Books</a>
+        </div>
+    </section>
+    {{ end }}
+
+    <!-- Categories Section -->
+    <section class="home-section featured-section">
+        <h2 class="section-title">Explore Collections</h2>
+        <div class="featured-categories">
+            <a href="/books/" class="category-item">
+                <span>Books</span>
+            </a>
+            <a href="/films/" class="category-item">
+                <span>Films</span>
+            </a>
+            <a href="/paintings/" class="category-item">
+                <span>Paintings</span>
+            </a>
+            <a href="/people/" class="category-item">
+                <span>People</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- People Section -->
+    {{ $people := where .Site.RegularPages "Section" "person" }}
+    {{ if gt (len $people) 0 }}
+    <section class="home-section people-section">
+        <h2 class="section-title">Featured Artists</h2>
+        <div class="people-carousel">
+            {{ range first 4 (shuffle $people) }}
+            <article class="person-card">
+                <a href="{{ .RelPermalink }}" class="person-link">
+                    {{ $personSlug := .Title | urlize }}
+                    {{ $personId := .Params.person_id | default "" }}
+                    {{ $folderName := "" }}
+                    {{ if and $personId (ne $personId "") }}
+                        {{ $folderName = printf "%s-%s" $personId $personSlug }}
+                    {{ else }}
+                        {{ $folderName = $personSlug }}
+                    {{ end }}
+                    {{ $posterPath := printf "/images/people/%s/poster.jpg" $folderName }}
+                    <div class="person-avatar" style="background-image: url('{{ $posterPath | relURL }}')"></div>
+                    <div class="person-info">
+                        <h3 class="person-name">{{ .Title }}</h3>
+                        {{ with .Params.nationality }}
+                        <p class="person-meta">{{ . }}</p>
+                        {{ end }}
+                    </div>
+                </a>
+            </article>
+            {{ end }}
+        </div>
+    </section>
+    {{ end }}
+
+    <!-- Latest from other sections -->
+    {{ $otherWorks := where (where .Site.RegularPages "Section" "not in" (slice "books" "person" "")) "Section" "ne" "" }}
+    {{ if gt (len $otherWorks) 0 }}
+    <section class="home-section other-works">
+        <h2 class="section-title">Other Explorations</h2>
+        <div class="other-works-grid">
+            {{ range first 3 $otherWorks }}
+            <article class="other-work-card">
+                <a href="{{ .RelPermalink }}" class="other-work-link">
+                    <h3 class="other-work-title">{{ .Title }}</h3>
+                    <p class="other-work-section">{{ .Section | humanize }}</p>
+                    <div class="other-work-excerpt">
+                        {{ .Summary | truncate 120 }}
+                    </div>
+                </a>
             </article>
             {{ end }}
         </div>
     </section>
     {{ end }}
 </div>
+
+<!-- Quote Section -->
+{{/*  <section class="quote-section">
+    <div class="container">
+        <blockquote>
+            <p>"Art is not what you see, but what you make others see."</p>
+            <cite>— Edgar Degas</cite>
+        </blockquote>
+    </div>
+</section>  */}}
 {{ end }}

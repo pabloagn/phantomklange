@@ -1,0 +1,52 @@
+// assets/scss/pages/_essay-single.scss
+
+.essay-single {
+    // Uses .container-content for width
+    @extend .container-content;
+    padding: var(--spacing-xl) 0; // Vertical padding only
+}
+
+.essay-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border);
+
+    h1 {
+        font-size: 2.8rem; // Slightly smaller than site H1
+        margin-bottom: var(--spacing-sm);
+        margin-top: 0; // Remove top margin for header H1
+        line-height: 1.1;
+    }
+}
+
+.essay-meta {
+    font-size: 1rem;
+    color: var(--fg-secondary);
+    font-family: var(--font-ui);
+    line-height: 1.5; // Improve spacing if meta wraps
+
+    a { // Link styling within meta
+       color: inherit;
+       text-decoration: underline;
+       text-decoration-color: rgba(var(--fg-secondary-rgb, 160,160,160), 0.4);
+       transition: color 0.2s ease, text-decoration-color 0.2s ease;
+       --fg-secondary-rgb: 160,160,160;
+
+        &:hover {
+            color: var(--accent-light);
+             text-decoration-color: var(--accent-light);
+        }
+    }
+
+    // Add spacing between meta items if needed
+    span + time::before, // Add separator before time if author present
+    time + span::before, // Add separator before tags/cats if time present
+    span + span::before { // Add separator between tag/cat groups
+        content: ' | ';
+        margin: 0 0.5em;
+        opacity: 0.5;
+    }
+}
+
+// Content styling is inherited from .single-content / _book-single.scss or base

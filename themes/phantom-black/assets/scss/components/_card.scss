@@ -1,0 +1,159 @@
+// assets/scss/components/_card.scss
+// Styles for .archive-grid-item, formerly .book-card etc.
+
+.archive-grid-item {
+  position: relative;
+  background: var(--bg-secondary); // Use secondary for contrast if needed
+  border: 1px solid var(--border);
+  overflow: hidden;
+  height: 100%; // Ensure consistent height for items in a row
+  display: flex; // Use flex for inner structure
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // Subtle default shadow
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); // Enhanced shadow on hover
+  }
+}
+
+.archive-grid-item-inner { // Not strictly needed if using flex on parent
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.archive-item-link {
+  display: block;
+  text-decoration: none;
+  color: inherit; // Inherit color from parent
+}
+
+.archive-item-cover {
+  position: relative;
+  width: 100%;
+  // Use aspect-ratio for modern browsers, fallback padding-bottom
+  aspect-ratio: 2 / 3; // Common book/poster ratio
+  padding-bottom: 150%; // Fallback: (3/2)*100
+  overflow: hidden;
+  background-color: var(--bg-secondary); // Placeholder bg
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+    z-index: 1;
+  }
+
+  // Placeholder styling
+  &.cover-placeholder {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--accent) 100%);
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    // Optional text placeholder
+    // &::after {
+    //   content: "No Image";
+    //   color: rgba(255, 255, 255, 0.3);
+    //   font-family: var(--font-ui);
+    //   font-size: 0.9rem;
+    // }
+  }
+
+  // Subtle overlay effect on hover (optional)
+  // &::before {
+  //   content: "";
+  //   position: absolute;
+  //   inset: 0; // Covers entire area
+  //   background: linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(0,0,0,0.2) 100%);
+  //   z-index: 2;
+  //   opacity: 0;
+  //   transition: opacity 0.3s ease;
+  // }
+}
+
+// Hover effects
+.archive-grid-item:hover .archive-item-cover {
+  img {
+    transform: scale(1.05);
+  }
+  // &::before { // Activate overlay on hover
+  //   opacity: 1;
+  // }
+}
+
+
+.archive-item-info {
+  padding: var(--spacing-md); // Consistent padding
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; // Allows meta to push to bottom
+  background: var(--bg-zero); // Match card background or use different?
+  border-top: 1px solid var(--border); // Separator line
+}
+
+.archive-item-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  line-height: 1.3;
+  margin: 0 0 0.5rem; // Adjust spacing
+  font-weight: 600;
+
+  a {
+    color: var(--fg-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--accent-light);
+    }
+  }
+}
+
+.archive-item-subtitle { // Used for author, person description, etc.
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--fg-secondary);
+  margin: 0 0 0.8rem;
+  // Text overflow handling for long subtitles
+  display: -webkit-box;
+  /* -webkit-line-clamp: 2; // Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.4em; // Approx height for 2 lines
+  line-height: 1.2em;
+}
+
+.archive-item-meta {
+  margin-top: auto; // Push meta content to the bottom
+  font-size: 0.85rem;
+  color: var(--fg-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  align-items: center;
+}
+
+// Star rating specific to book cards (or other rated items)
+.book-rating { // Keep specific class if only for books
+  margin-left: auto; // Push rating to the right if needed
+
+  .star {
+    color: var(--fg-secondary);
+    opacity: 0.5;
+    &.filled {
+      color: var(--accent-light);
+      opacity: 1;
+    }
+  }
+}

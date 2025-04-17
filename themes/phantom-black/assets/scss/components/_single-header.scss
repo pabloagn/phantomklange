@@ -1,0 +1,305 @@
+// assets/scss/components/_single-header.scss
+
+// --- Generic Header Image Styling ---
+.header-image {
+  position: relative;
+  height: 500px; // Default height
+  width: 100%;
+  background-position: center;
+  background-size: cover;
+  background-color: var(--bg-secondary); // Fallback background
+  display: flex; // Use flex for alignment if needed later
+  margin-bottom: 140px; // Default overlap distance
+
+  // Pseudo-element for filtered background image
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0; // Cover entire area
+    background: inherit; // Inherit background-image, size, position
+    filter: grayscale(100%) contrast(120%) brightness(60%) blur(0px); // Adjusted filter
+    z-index: 1;
+  }
+
+  // Overlay gradient
+  .header-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+      rgba(var(--bg-zero-rgb, 0,0,0), 0.5) 0%,
+      rgba(var(--bg-zero-rgb, 0,0,0), 0.7) 70%,
+      rgba(var(--bg-zero-rgb, 0,0,0), 0.95) 100%); // Darker at bottom
+    z-index: 2;
+    --bg-zero-rgb: 0,0,0;
+  }
+
+  // --- Responsive Height Adjustments ---
+  @media (max-width: 992px) {
+    height: 400px;
+    margin-bottom: 180px; // Adjust overlap
+  }
+  @media (max-width: 768px) {
+    height: 350px;
+    margin-bottom: 240px; // Adjust overlap
+  }
+   @media (max-width: 480px) {
+    height: 300px;
+    margin-bottom: 260px; // Adjust overlap
+  }
+
+  // Style for when no image is available
+  &:not([style*="background-image"]) {
+    height: 250px; // Reduced height if no image
+    background-color: var(--bg-secondary);
+    margin-bottom: 100px; // Less overlap if no image
+    &::before, .header-overlay {
+      display: none; // Hide filter and overlay if no image
+    }
+    // Adjust container position when no image
+    .work-details-container, .person-details-container {
+       bottom: -80px; // Reduced overlap
+    }
+     @media (max-width: 768px) {
+       margin-bottom: 150px; // Adjust overlap
+        .work-details-container, .person-details-container { bottom: -100px; }
+     }
+      @media (max-width: 480px) {
+       margin-bottom: 180px; // Adjust overlap
+       .work-details-container, .person-details-container { bottom: -120px; }
+     }
+  }
+}
+
+
+// --- Details Container (Overlapping Card) ---
+// Generic container for both work and person details
+.details-container { // New generic name
+  position: absolute;
+  bottom: -120px; // Default overlap
+  left: 0;
+  right: 0;
+  z-index: 10; // Ensure it's above header image pseudo-elements
+  width: 100%;
+  max-width: var(--width-content); // Use content width
+  margin-left: auto;
+  margin-right: auto;
+  // Apply container padding via mixin or direct padding
+  /* padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md); */
+
+   // Responsive adjustments for overlap distance
+   @media (max-width: 992px) { bottom: -160px; }
+   @media (max-width: 768px) { bottom: -220px; }
+   @media (max-width: 480px) { bottom: -240px; }
+}
+// Alias old class names to the new one for backwards compatibility (optional)
+.book-details-container,
+.person-details-container {
+  @extend .details-container;
+}
+
+
+.details-inner { // New generic name
+  display: flex;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  min-height: 200px; // Minimum height
+
+  @media (max-width: 992px) {
+     flex-direction: column;
+     min-height: 0; // Remove min-height when stacked
+  }
+}
+// Alias old class names
+.book-details-inner,
+.person-details-inner {
+  @extend .details-inner;
+}
+
+
+// --- Work/Book Specific Header Styles ---
+.work-poster-container { // Renamed for generic use
+  flex: 0 0 auto;
+  width: 240px; // Slightly smaller poster? Adjust as needed
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: center; // Vertically center poster
+
+  @media (max-width: 992px) {
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-sm);
+    flex-basis: auto; // Reset flex basis
+  }
+}
+// Alias old class name
+.book-poster-container {
+  @extend .work-poster-container;
+}
+
+
+.work-poster { // Renamed
+  width: 100%;
+  height: auto; // Let height adjust based on width
+  max-height: 300px; // Max height to prevent very tall posters
+  object-fit: contain;
+  display: block;
+  border-radius: 2px;
+
+  @media (max-width: 992px) {
+    width: 140px; // Fixed smaller width when stacked
+    max-height: none; // Remove max height
+  }
+}
+// Alias old class name
+.book-poster {
+  @extend .work-poster;
+}
+
+
+.work-metadata { // Renamed
+  flex: 1; // Take remaining space
+  padding: var(--spacing-lg);
+  border-left: 1px solid var(--border);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 992px) {
+     border-left: none;
+     border-top: 1px solid var(--border);
+     padding-top: var(--spacing-md); // Reduce top padding when stacked
+  }
+}
+// Alias old class name
+.book-metadata {
+  @extend .work-metadata;
+}
+
+.work-metadata-title { // Renamed
+  margin: 0 0 var(--spacing-xs);
+  font-size: 2rem;
+  color: var(--fg-primary);
+  line-height: 1.2;
+
+  @media (max-width: 480px) { font-size: 1.5rem; }
+}
+// Alias old class name
+.book-metadata-title {
+  @extend .work-metadata-title;
+}
+
+.work-metadata-author { // Renamed (used for primary contributors)
+  font-size: 1.0rem;
+  color: var(--fg-secondary);
+  font-style: italic;
+  margin: 0 0 var(--spacing-lg); // Space before metadata grid
+
+  a { // Ensure links within author list are styled correctly
+      color: inherit; // Inherit the secondary color
+      text-decoration: underline;
+      text-decoration-color: rgba(var(--fg-secondary-rgb, 160,160,160), 0.5);
+      transition: color 0.2s ease, text-decoration-color 0.2s ease;
+      --fg-secondary-rgb: 160,160,160;
+
+      &:hover, &:focus {
+          color: var(--accent-light);
+          text-decoration-color: var(--accent-light);
+      }
+  }
+}
+// Alias old class name
+.book-metadata-author {
+  @extend .work-metadata-author;
+}
+
+
+// --- Person Specific Header Styles ---
+.person-avatar-container {
+  flex: 0 0 150px; // Fixed size circle
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--border); // Border around avatar
+
+  @media (max-width: 768px) {
+    margin-bottom: var(--spacing-md);
+    width: 120px; // Smaller avatar on mobile
+    height: 120px;
+    flex-basis: auto;
+  }
+}
+
+.person-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.person-metadata { // Container for person info within details-inner
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--spacing-md); // Add padding if avatar is present
+
+   @media (max-width: 992px) {
+      text-align: center; // Center text when stacked
+      padding: var(--spacing-md) 0 0; // Add top padding instead
+   }
+}
+
+.person-name {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  color: var(--fg-primary);
+  margin: 0 0 var(--spacing-sm);
+  line-height: 1.1;
+
+  @media (max-width: 768px) { font-size: 1.8rem; }
+}
+
+.person-description {
+  font-size: 1.1rem;
+  color: var(--fg-secondary);
+  margin: 0 0 var(--spacing-md);
+  font-style: italic;
+  line-height: 1.4;
+  max-width: 60ch; // Limit line length for readability
+
+  @media (max-width: 992px) { margin-left: auto; margin-right: auto; } // Center block
+  @media (max-width: 768px) { font-size: 1rem; }
+}
+
+.person-meta-details {
+  font-size: 0.9rem;
+  color: var(--fg-secondary);
+  font-family: var(--font-ui);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm) var(--spacing-md);
+  margin-top: auto; // Push to bottom
+
+  .meta-item { // Individual item like Born/Died
+    position: relative;
+    padding-right: var(--spacing-md); // Space for separator
+
+    // Separator dot
+    &:not(:last-child)::after {
+      content: '•';
+      position: absolute;
+      right: calc(var(--spacing-md) / 2 - 3px); // Center in the gap
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.5;
+    }
+  }
+
+   @media (max-width: 992px) {
+     justify-content: center; // Center items when stacked
+     margin-top: var(--spacing-md);
+   }
+}

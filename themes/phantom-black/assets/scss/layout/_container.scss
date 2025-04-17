@@ -1,0 +1,20 @@
+// assets/scss/layout/_container.scss
+
+.container {
+  width: 100%; // Ensure full width for padding
+  max-width: var(--width-wide); // Use the wider width
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-md); // Add horizontal padding
+  padding-right: var(--spacing-md);
+}
+
+// Specific container for narrower content if needed
+.container-content {
+  width: 100%;
+  max-width: var(--width-content);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+}

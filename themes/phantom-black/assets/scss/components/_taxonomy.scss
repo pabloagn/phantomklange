@@ -1,0 +1,50 @@
+// assets/scss/components/_taxonomy.scss
+
+// Container for taxonomy sections (tags, categories) on single pages
+.page-taxonomy {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border);
+}
+
+.taxonomy-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.taxonomy-title {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--fg-primary);
+}
+
+.taxonomy-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: var(--spacing-sm);
+}
+
+.taxonomy-tag {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: var(--font-ui);
+  color: var(--fg-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+
+  &:hover,
+  &:focus {
+    background-color: var(--accent);
+    color: var(--fg-primary);
+    border-color: var(--accent);
+    transform: translateY(-2px); // Subtle lift effect
+    outline: none; // Remove default focus outline if needed
+  }
+}

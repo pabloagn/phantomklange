@@ -1,0 +1,141 @@
+// assets/scss/pages/_book-single.scss
+// Styles specific to the single book page layout
+
+.book-content-container { // Also used by person, essay? Maybe rename to .single-content-container
+  position: relative; // Needed if ToC is absolutely positioned later
+  max-width: var(--width-content);
+  margin: 0 auto;
+  padding: 50px 0 var(--spacing-xl); // Add bottom padding
+}
+
+// Table of Contents styling
+.book-toc { // Rename to .single-toc?
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: 4px;
+  margin-bottom: var(--spacing-lg); // Space below ToC
+  border: 1px solid var(--border); // Subtle border
+  // Optional: Make it sticky or position absolutely
+  // position: sticky;
+  // top: calc(var(--header-height, 80px) + 2rem); // Requires calculating header height
+
+  .toc-title {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    margin: 0 0 var(--spacing-md);
+    color: var(--fg-primary);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--spacing-sm);
+  }
+
+  nav ul {
+    list-style: none;
+    padding-left: 0; // Remove default padding
+    margin: 0;
+    font-size: 0.95rem;
+
+    ul { // Nested lists
+      padding-left: var(--spacing-md); // Indent nested items
+      margin-top: var(--spacing-xs);
+    }
+  }
+
+  nav li {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  nav a {
+    color: var(--fg-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    display: block; // Make links block for better padding/hover
+
+    &:hover,
+    &:focus {
+      color: var(--accent-light);
+    }
+  }
+}
+
+// Main content area styling
+.book-content { // Rename to .single-content?
+  // Base styles are in _typography.scss
+
+  // Specific heading treatments within content
+  h2 {
+    font-size: 1.8rem; // Slightly smaller than page title H1
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border); // Separator line below H2
+    position: relative;
+
+    // Remove the ::after line, replaced by border-bottom
+    // &::after { display: none; }
+  }
+
+  h3 {
+    font-size: 1.4rem;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm); // Less space after H3
+    color: var(--accent-light); // Use accent color for H3?
+  }
+
+  // Heading anchor link styles
+  .heading-wrapper { // Wrapper added by JS
+    position: relative; // Needed for anchor positioning?
+  }
+  .heading-anchor {
+    opacity: 0; // Hide by default
+    display: inline-block;
+    margin-left: 0.5rem;
+    color: var(--accent-light);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    font-size: 0.8em; // Adjust size relative to heading
+    vertical-align: middle;
+    line-height: 1; // Prevent affecting heading line height
+
+    // SVG icon for the anchor link
+    &::after {
+      content: '';
+      display: inline-block;
+      width: 1em; // Size relative to font-size
+      height: 1em;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a7b9e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'%3E%3C/path%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain; // Ensure icon scales
+      vertical-align: middle;
+      margin-left: 0.1em;
+    }
+
+    // Show anchor on heading hover
+    *:hover > .heading-wrapper + &, // Show when hovering heading element
+    &:focus { // Also show on focus
+      opacity: 0.7;
+    }
+    &:hover { // Full opacity on direct anchor hover
+        opacity: 1;
+    }
+  }
+
+  // Adjust figure/image styling within content
+  figure {
+      margin: var(--spacing-lg) 0;
+      img {
+          max-width: 100%;
+          height: auto;
+          display: block; // Remove extra space below image
+          margin: 0 auto; // Center images
+          border-radius: 4px; // Optional rounding
+      }
+      figcaption {
+          text-align: center;
+          font-size: 0.9rem;
+          color: var(--fg-secondary);
+          margin-top: var(--spacing-sm);
+          font-style: italic;
+      }
+  }
+}

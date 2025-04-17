@@ -4,22 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
-    
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;700&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap">
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+    <!-- CSS via Hugo Pipes -->
+    {{ $style := resources.Get "scss/main.scss" }}
+    
+    {{ if $style }}
+        {{ if hugo.IsServer }}
+            {{ $options := (dict "targetPath" "css/main.css" "outputStyle" "expanded" "enableSourceMap" true) }}
+            {{ $style = $style | css.Sass $options }}
+        {{ else }}
+            {{ $options := (dict "targetPath" "css/main.css" "outputStyle" "compressed") }}
+            {{ $style = $style | css.Sass $options | resources.Minify | resources.Fingerprint }}
+        {{ end }}
+        <link rel="stylesheet" href="{{ $style.RelPermalink }}"{{ if not hugo.IsServer }} integrity="{{ $style.Data.Integrity }}"{{ end }}>
+    {{ else }}
+        <!-- Fallback to static CSS if SCSS processing fails -->
+        <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+    {{ end }}
 </head>
 <body>
     {{ partial "header.html" . }}
-
     <main>
         {{ block "main" . }}{{ end }}
     </main>
-
     {{ partial "footer.html" . }}
-
     <script src="{{ "js/anchor-links.js" | relURL }}"></script>
+    <!-- Conditionally load archive JS -->
+    {{ if or (eq .Section "books") (eq .Section "films") (eq .Section "paintings") (eq .Section "scents") (eq .Section "people") }}
+         <!-- Consider a more generic name if the script is the same for all -->
+         <script src="{{ "js/book-archive.js" | relURL }}"></script>
+    {{ end }}
 </body>
 </html>

@@ -1,0 +1,61 @@
+// assets/scss/layout/_grid.scss
+
+// Generic grid for archive items
+.archive-grid {
+  display: grid;
+  gap: var(--spacing-lg); // Default gap
+  margin-bottom: var(--spacing-xl); // Space below grid
+
+  // Default grid columns - adjust per specific grid type if needed
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+  // Breakpoints for column adjustments
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  // Specific adjustments for related items grid
+  &.related-items-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-xl);
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // Adjust breakpoint
+      gap: var(--spacing-lg);
+    }
+     @media (max-width: 480px) {
+      grid-template-columns: 1fr; // Single column on smallest screens
+      gap: var(--spacing-lg);
+    }
+  }
+}
+
+// Specific Grid types if needed (often handled by component styles)
+// .book-grid { ... }
+// .person-grid { ... }
+
+// Metadata Grid (within single headers)
+.metadata-grid {
+  display: flex;
+  flex: 1;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+
+  @media (max-width: 992px) {
+     flex-direction: column;
+     gap: var(--spacing-sm);
+  }
+}
+
+.metadata-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}

@@ -1,0 +1,76 @@
+// assets/scss/pages/_essay-list.scss
+
+.essay-list {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    // Use container-content for narrower width
+    @extend .container-content;
+}
+
+.essay-list-item {
+    padding: var(--spacing-lg) 0;
+    border-bottom: 1px solid var(--border);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.essay-list-title {
+    font-size: 1.8rem;
+    margin: 0 0 var(--spacing-xs);
+    font-family: var(--font-heading); // Ensure heading font
+
+    a {
+        color: var(--fg-primary);
+        text-decoration: none;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--accent-light);
+        }
+    }
+}
+
+.essay-list-meta {
+    font-size: 0.9rem;
+    color: var(--fg-secondary);
+    margin-bottom: var(--spacing-md);
+    font-family: var(--font-ui);
+
+    a { // Link styling within meta
+        color: inherit; // Inherit secondary color
+        text-decoration: underline;
+        text-decoration-color: rgba(var(--fg-secondary-rgb, 160,160,160), 0.4);
+        transition: color 0.2s ease, text-decoration-color 0.2s ease;
+        --fg-secondary-rgb: 160,160,160;
+
+        &:hover {
+            color: var(--accent-light);
+             text-decoration-color: var(--accent-light);
+        }
+    }
+}
+
+// Description or Summary
+.essay-list-description,
+.essay-list-summary {
+    color: var(--fg-primary); // Slightly less prominent than main text?
+    opacity: 0.9;
+    margin-bottom: var(--spacing-md);
+    line-height: 1.7;
+    font-size: 1.05rem; // Slightly smaller than body default?
+}
+
+.read-more {
+    font-family: var(--font-heading); // Heading font for emphasis
+    color: var(--accent-light);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: var(--fg-primary);
+    }
+}

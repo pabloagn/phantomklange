@@ -1,0 +1,218 @@
+// assets/scss/components/_archive-controls.scss
+// Styles for search/filter elements on archive pages
+
+.archive-controls {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg) 0;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--bg-zero); // Darker background for controls?
+}
+
+.search-filter-container {
+  // Use the .container class/mixin
+  @extend .container;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  align-items: flex-end; // Align items to bottom for consistent look
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+}
+
+// Search input styling
+.archive-search {
+  position: relative;
+  flex: 1 1 300px; // Allow shrinking but prefer 300px width
+
+  input[type="text"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 40px; // Space for button
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--fg-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    border-radius: 0; // Sharp corners
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-light);
+      box-shadow: 0 0 0 2px rgba(var(--accent-light-rgb, 138, 123, 158), 0.3); // Subtle focus ring
+      // Define --accent-light-rgb if needed
+      --accent-light-rgb: 138, 123, 158;
+    }
+  }
+
+  button {
+    position: absolute;
+    right: 5px; // Closer to edge
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    padding: 0.5rem; // Make clickable area larger
+    line-height: 0; // Prevent extra space
+    transition: color 0.3s ease;
+
+    &:hover,
+    &:focus {
+      color: var(--accent-light);
+      outline: none;
+    }
+
+    svg { // Style the icon if needed
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Filter controls styling
+.archive-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.filter-group {
+  flex: 1 1 160px; // Allow filters to grow/shrink
+
+  label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-family: var(--font-ui); // Use UI font
+    font-size: 0.8rem; // Slightly smaller label
+    color: var(--fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.7rem 2.5rem 0.7rem 1rem; // Add padding for arrow
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--fg-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    border-radius: 0;
+    appearance: none;
+    // Custom arrow using SVG background image
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(160, 160, 160)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-light);
+      box-shadow: 0 0 0 2px rgba(var(--accent-light-rgb, 138, 123, 158), 0.3);
+       --accent-light-rgb: 138, 123, 158;
+    }
+  }
+}
+
+// Results info area
+.archive-results-info {
+  // Use the .container class/mixin
+  @extend .container;
+  margin-bottom: var(--spacing-xl);
+  padding-top: var(--spacing-sm); // Add a little space above
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); // Space between count and filters
+}
+
+#results-count { // ID selector
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--fg-secondary);
+  margin: 0;
+  font-style: italic;
+}
+
+// Active filters display
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm); // Slightly larger gap
+}
+
+.active-filter {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.7rem; // Adjust padding
+  background-color: rgba(var(--accent-rgb, 98, 87, 114), 0.1); // Use accent color
+  border: 1px solid rgba(var(--accent-rgb, 98, 87, 114), 0.3);
+  color: var(--fg-secondary);
+  font-size: 0.85rem;
+  font-family: var(--font-ui);
+  border-radius: 3px; // Slight rounding
+  --accent-rgb: 98, 87, 114; // Define if needed
+
+  button {
+    background: none;
+    border: none;
+    color: var(--fg-secondary);
+    cursor: pointer;
+    font-size: 1.1rem; // Slightly larger 'x'
+    line-height: 1;
+    padding: 0 0 0 var(--spacing-sm); // Pad left only
+    margin-left: var(--spacing-xs);
+    opacity: 0.7;
+    transition: color 0.3s ease, opacity 0.3s ease;
+
+    &:hover,
+    &:focus {
+      color: var(--accent); // Use main accent on hover
+      opacity: 1;
+      outline: none;
+    }
+  }
+}
+
+// No results / Reset
+.no-results {
+  // Use the .container class/mixin
+  @extend .container;
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--fg-secondary);
+  border: 1px dashed var(--border); // Dashed border for distinction
+  background-color: var(--bg-secondary);
+  margin-top: var(--spacing-xl);
+  border-radius: 4px;
+}
+
+.reset-button {
+  display: inline-block;
+  margin-top: var(--spacing-md);
+  padding: 0.6rem 1.5rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--fg-primary);
+  font-family: var(--font-ui); // Use UI font
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  letter-spacing: 0.05em;
+  border-radius: 3px;
+
+  &:hover,
+  &:focus {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--fg-primary); // Ensure text remains visible
+    outline: none;
+  }
+}

@@ -1,0 +1,62 @@
+// assets/scss/pages/_person-single.scss
+
+// Uses .single-content-container, .single-content from _book-single.scss or similar
+
+// Styling for the contributions section
+.person-contributions {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border);
+
+  h2 {
+    font-size: 1.6rem;
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+  }
+}
+
+.contribution-group {
+  margin-bottom: var(--spacing-lg);
+
+  h3 {
+    font-size: 1.2rem;
+    font-family: var(--font-ui); // UI font for role title
+    color: var(--fg-primary);
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--spacing-xs);
+    font-weight: 600; // Bolder role title
+  }
+
+  .contribution-count {
+    font-weight: 400;
+    font-size: 0.9em;
+    color: var(--fg-secondary);
+    margin-left: var(--spacing-xs);
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: var(--spacing-xs) 0;
+    font-size: 1rem;
+
+    a {
+      color: var(--accent-light); // Link color for work title
+      &:hover {
+        color: var(--fg-primary);
+      }
+    }
+  }
+
+  .work-date {
+    font-size: 0.9em;
+    color: var(--fg-secondary);
+    margin-left: var(--spacing-sm);
+    font-family: var(--font-ui);
+  }
+}

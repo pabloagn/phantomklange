@@ -1,0 +1,50 @@
+// assets/scss/components/_header.scss
+
+.site-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000; // Ensure it stays on top
+  background-color: rgba(var(--bg-zero-rgb, 0, 0, 0), 0.5); // Use RGB for alpha
+  padding: var(--spacing-sm) 0; // Slightly less padding? Adjust as needed
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(var(--border-rgb, 42, 42, 42), 0.2); // Subtle border
+
+  // Define RGB versions of colors if needed for alpha transparency
+  // This should ideally be in _variables or _base
+  // Example: Assuming --border: #2a2a2a
+  --border-rgb: 42, 42, 42;
+  --bg-zero-rgb: 0, 0, 0;
+}
+
+.site-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // Use the .container mixin/class for padding/width
+  @extend .container; // Or include a mixin if you prefer
+}
+
+.site-logo {
+  display: flex; // Helps with alignment if needed
+  align-items: center;
+
+  a {
+    // Inherits base link styles, override if needed
+    display: block; // Ensure link takes up space for the image
+  }
+}
+
+.header-logo {
+  height: 70px;
+  width: auto;
+  display: block;
+  /* vertical-align: middle; // Better alignment */
+  opacity: 0.95;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}

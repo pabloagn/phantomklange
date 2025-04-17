@@ -1,32 +1,33 @@
 // assets/scss/main.scss
 
-// 1. Settings/Utils (Variables, Mixins - if any)
-@import 'utils/variables'; // Or @use 'utils/variables' as *;
+// 1. Utils (Variables defined as CSS Custom Properties in _base.scss)
+// @import 'utils/variables'; // Only if using SCSS variables
 
-// 2. Generic (Reset, Box-sizing)
-@import 'base/reset'; // If you use one
+// 2. Base (Resets, global styles, base typography)
 @import 'base/base';
-
-// 3. Elements (Base HTML tags)
 @import 'base/typography';
 
-// 4. Objects (Layout patterns)
+// 3. Layout (Containers, grids)
 @import 'layout/container';
 @import 'layout/grid';
-@import 'layout/structure';
 
-// 5. Components (UI pieces)
+// 4. Components (Reusable UI elements)
 @import 'components/header';
 @import 'components/navigation';
 @import 'components/footer';
-@import 'components/card'; // Covers book-card, archive-grid-item etc.
-@import 'components/metadata';
-// ... import other components
+@import 'components/card'; // For archive grids
+@import 'components/single-header'; // For single page headers (work/person)
+@import 'components/metadata'; // For metadata grid within headers
+@import 'components/taxonomy'; // For tag/category display
+@import 'components/related-content';
+@import 'components/archive-controls'; // Search/filter bars
 
-// 6. Pages (Page-specific overrides - use sparingly)
+// 5. Pages (Specific overrides for page types)
 @import 'pages/home';
-@import 'pages/book-single';
+@import 'pages/book-single'; // Or a generic _single.scss
 @import 'pages/person-single';
+@import 'pages/essay-list';
+@import 'pages/essay-single';
 
-// 7. Utilities (Helper classes - last)
-@import 'utils/helpers'; // If you have them
+// 6. Utilities (Helper classes - Optional)
+// @import 'utils/helpers';

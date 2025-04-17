@@ -1,0 +1,94 @@
+// assets/scss/components/_footer.scss
+
+.site-footer {
+  background: var(--bg-zero);
+  color: var(--fg-secondary);
+  padding: var(--spacing-lg) 0;
+  text-align: center;
+  margin-top: var(--spacing-xl); // Add space above footer
+}
+
+.footer-container {
+  // Use the .container mixin/class
+  @extend .container;
+  max-width: var(--width-wide); // Allow footer content to be wider if needed
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.footer-logo {
+  margin: var(--spacing-sm) 0;
+  display: block; // Make it block for auto margins
+}
+
+.footer-logo-img {
+  height: 180px;
+  width: auto;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  display: inline-block; // Allow text-align center to work
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.footer-nav {
+  ul {
+    display: flex;
+    flex-wrap: wrap; // Allow wrapping
+    justify-content: center; // Center items
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: var(--spacing-sm) var(--spacing-lg); // Row and column gap
+  }
+
+  a {
+    color: var(--fg-secondary);
+    text-decoration: none;
+    font-size: 1rem;
+    font-family: var(--font-nav);
+    transition: color 0.3s ease;
+
+    &:hover,
+    &:focus {
+      color: var(--accent-light);
+      text-decoration: underline;
+    }
+  }
+}
+
+.footer-social { // For social links later
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.social-icon {
+  font-size: 1.2rem;
+  color: var(--fg-secondary);
+  transition: color 0.3s ease;
+
+  &:hover,
+  &:focus {
+    color: var(--accent-light);
+  }
+}
+
+.footer-bottom {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border);
+  width: 100%;
+  font-size: 0.9rem;
+  color: rgba(var(--fg-secondary-rgb, 160, 160, 160), 0.7); // Make slightly dimmer
+
+  // Define RGB version if needed
+  --fg-secondary-rgb: 160, 160, 160;
+}

@@ -1,0 +1,35 @@
+// assets/scss/components/_metadata.scss
+
+// These styles are applied within the .book-metadata or .person-metadata containers
+
+.metadata-item {
+  margin-bottom: var(--spacing-sm); // Consistent spacing
+}
+
+.metadata-label {
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  color: var(--fg-secondary);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+}
+
+.metadata-value {
+  font-size: 1rem;
+  color: var(--fg-primary);
+  word-break: break-word; // Prevent long values from overflowing
+
+  a.metadata-link { // Target links specifically within metadata
+    color: var(--accent-light);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      color: var(--fg-primary);
+      text-decoration: underline;
+    }
+  }
+}

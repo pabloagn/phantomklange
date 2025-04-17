@@ -1,0 +1,99 @@
+// assets/scss/base/_typography.scss
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: var(--spacing-lg) 0 var(--spacing-md);
+  letter-spacing: -0.02em;
+  color: var(--fg-primary); // Ensure consistent color
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-top: var(--spacing-xl); // Keep default top margin
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+// Add h4, h5, h6 base sizes if needed
+
+// Paragraphs
+p {
+  margin: 0 0 var(--spacing-md);
+}
+
+// Links
+a {
+  color: var(--accent-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--fg-primary);
+  }
+}
+
+// Blockquotes (generic styling)
+blockquote {
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-left: 3px solid var(--accent-light);
+  background-color: rgba(98, 87, 114, 0.1); // Use accent color with alpha
+  font-style: italic;
+  color: var(--fg-secondary);
+  position: relative;
+
+  // Decorative quote mark
+  &::before {
+    content: '"';
+    position: absolute;
+    top: -20px;
+    left: 10px;
+    font-size: 3rem;
+    color: var(--accent);
+    opacity: 0.3;
+    font-family: Georgia, serif;
+}
+
+  p {
+    margin-bottom: 0; // Remove bottom margin for paragraphs inside blockquotes
+  }
+}
+
+// Horizontal Rule
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--spacing-lg) 0;
+}
+
+// Code
+code {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  background-color: var(--bg-secondary);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre {
+  background-color: #272822; // Match syntax highlighting
+  padding: var(--spacing-md);
+  overflow-x: auto;
+  border-radius: 4px;
+  margin-bottom: var(--spacing-md);
+
+  code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.9em;
+  }
+}

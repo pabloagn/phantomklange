@@ -1,0 +1,72 @@
+// assets/scss/components/_navigation.scss
+
+.main-nav {
+  ul {
+    display: flex;
+    flex-wrap: wrap; // Allow wrapping on smaller screens
+    gap: 0 var(--spacing-lg); // Add gap between items, no vertical gap initially
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    position: relative;
+    padding: var(--spacing-sm) 0; // Add some padding for easier clicking
+  }
+
+  a {
+    font-family: var(--font-nav); // Use specific nav font
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    letter-spacing: 0.2em;
+    font-size: 0.80rem;
+    font-weight: 400;
+    transition: color 0.3s ease; // Only transition color
+    text-transform: uppercase;
+    position: relative;
+    padding-bottom: 0.5rem; // Space for the underline
+
+    &::after { // Underline effect
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--accent-light);
+      transition: width 0.3s ease;
+    }
+
+    &:hover,
+    &:focus { // Add focus state for accessibility
+      color: var(--accent-light);
+
+      &::after {
+        width: 70%;
+      }
+    }
+  }
+
+  // Style for active menu item
+  li.active a {
+    color: var(--accent-light);
+    font-weight: 600; // Make active item slightly bolder
+
+    &::after {
+      width: 70%;
+    }
+  }
+
+  // Responsive adjustments for navigation
+  @media (max-width: 768px) {
+    margin-top: var(--spacing-md);
+    width: 100%; // Take full width
+
+    ul {
+      justify-content: center; // Center items when wrapped
+      gap: var(--spacing-sm) var(--spacing-md); // Adjust gap for smaller screens
+    }
+  }
+}
